@@ -4,8 +4,19 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-group = 'me.andyreckt'
-version = '1.0'
+group = 'me.andyreckt.raspberry'
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
 
 repositories {
     maven {
@@ -14,13 +25,6 @@ repositories {
 }
 
 dependencies {
-
-
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
-}
-
-allprojects {
-    group "me.andyreckt.raspberry"
-    version "$version"
 }
