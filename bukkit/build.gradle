@@ -1,0 +1,49 @@
+plugins {
+    id 'idea'
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+repositories {
+    maven {
+        url 'https://repo.mincats.eu/mirrors'
+    }
+}
+
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    compileOnly "org.github.spigot:1.8.8:1.8.8"
+
+    implementation project(':shared')
+}
+
+publishing {
+    repositories {
+//        maven {
+//            name 'mincatsRepo'
+//            url 'https://repo.mincats.eu/private'
+//            credentials(PasswordCredentials)
+//        }
+    }
+
+    publications {
+        shadow(MavenPublication) {
+            groupId "$group"
+            artifactId 'bukkit'
+            version "$version"
+
+            from components.java
+        }
+    }
+}
