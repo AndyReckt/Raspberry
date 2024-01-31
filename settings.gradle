@@ -1,6 +1,23 @@
-plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
-}
+
+
 rootProject.name = 'Raspberry'
 include 'shared'
+include 'bukkit'
+include 'paper'
 
+// Define the root of the modules
+def examplesDir = new File(rootDir, 'examples')
+
+// Check if the directory exists and is a directory
+if (examplesDir.exists() && examplesDir.isDirectory()) {
+    // List all subdirectories
+    examplesDir.eachDir { dir ->
+        // Check if a build.gradle file exists in the subdirectory
+        if (new File(dir, 'build.gradle').exists() || new File(dir, 'build.gradle.kts').exists()) {
+            // Include the module
+            include ":examples:${dir.name}"
+            // Set the project directory if needed
+            project(":examples:${dir.name}").projectDir = dir
+        }
+    }
+}

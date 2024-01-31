@@ -1,6 +1,7 @@
 plugins {
     id 'idea'
     id 'java'
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -27,4 +28,24 @@ repositories {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
+
+publishing {
+    repositories {
+//        maven {
+//            name 'mincatsRepo'
+//            url 'https://repo.mincats.eu/private'
+//            credentials(PasswordCredentials)
+//        }
+    }
+
+    publications {
+        shadow(MavenPublication) {
+            groupId "$group"
+            artifactId 'shared'
+            version "$version"
+
+            from components.java
+        }
+    }
 }
