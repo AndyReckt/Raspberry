@@ -1,0 +1,5 @@
+name: "ExamplePlugin"
+main: "me.andyreckt.raspberry.example.ExamplePlugin"
+author: "AndyReckt"
+version: "1.0"
+description: "ExamplePlugin to show how to use Raspberry"
