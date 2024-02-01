@@ -66,6 +66,11 @@ public class RaspberryBukkit extends Raspberry {
     }
 
     @Override
+    public CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input) {
+        return new BukkitCommandCompletionContext((RaspberryBukkitCommand) command, input, (BukkitCommandIssuer) issuer);
+    }
+
+    @Override
     public RaspberryCommand createCommand(
             Object instance, Class<?> owningClass,
             CommandData commandData, Method method,

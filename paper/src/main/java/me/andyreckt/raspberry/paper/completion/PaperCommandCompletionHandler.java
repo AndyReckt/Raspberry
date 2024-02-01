@@ -49,12 +49,14 @@ public class PaperCommandCompletionHandler implements Listener {
 
     private List<String> getCompletions(String buffer, List<String> existingCompletions, CommandSender sender) {
         String[] args = buffer.split(" ");
+        CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
 
         String commandLabel = stripLeadingSlash(args[0]);
         args = args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[]{""};
 
-        BukkitRaspberryCommand command = this.raspberry.getBukkitCommand(commandLabel);
-        List<String> completions = command.tabComplete(sender, commandLabel, args);
+        RaspberryCommand command = raspberry.getRootCommand().getChild(commandLabel);
+
+        List<String> completions = raspberry.getCommandHandler().getCompletions(command, issuer, args);
 
         return preformOnImmutable(existingCompletions, (list) -> list.addAll(completions));
     }

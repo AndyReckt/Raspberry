@@ -45,19 +45,17 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
     }
 
     @Override
-    public boolean execute(CommandSender commandSender, String label0, String[] args) {
-        String label = label0.replace(plugin.getName().toLowerCase() + ":", "");
-
+    public boolean execute(CommandSender commandSender, String label, String[] args) {
         if (command.isAsync()) {
-            raspberry.getExecutor().execute(() -> execute0(commandSender, label, args));
+            raspberry.getExecutor().execute(() -> execute0(commandSender, args));
         } else {
-            execute0(commandSender, label, args);
+            execute0(commandSender, args);
         }
 
         return true;
     }
 
-    private void execute0(CommandSender sender, String label, String[] args) {
+    private void execute0(CommandSender sender, String[] args) {
         Arguments arguments = raspberry.getCommandHandler().processArguments(args);
 
         RaspberryCommand executionNode = command.findCommand(arguments);
@@ -91,109 +89,9 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-        Set<String> completions = new HashSet<>();
-        if (!(sender instanceof Player)) return new ArrayList<>(completions);
-
-        Arguments arguments = raspberry.getCommandHandler().processArguments(args);
+        if (!(sender instanceof Player)) return new ArrayList<>();
         CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
-
-        RaspberryCommand node = command.findCommand(arguments);
-        if (!node.canUse(issuer)) return new ArrayList<>(completions);
-
-        List<String> realArgs = arguments.getArgs();
-
-        int index = realArgs.size() - 1;
-        if (index < 0) index = 0;
-        if (args[args.length -1].equalsIgnoreCase(" ")) index++;
-
-        if (node.hasChild()) {
-            String name = realArgs.isEmpty() ? "" : realArgs.get(realArgs.size() - 1);
-            completions.addAll(node.getChildren().values().stream()
-                    .filter(it -> node.getName() != null && node.canUse(issuer) &&
-                            (RaspberryUtils.startsWithIgnoreCase(node.getName(), name) || name == null || name.isEmpty()))
-                    .map(RaspberryCommand::getName)
-                    .collect(Collectors.toList()));
-
-
-            if (!completions.isEmpty()) {
-                return new ArrayList<>(completions);
-            }
-        }
-
-        if (args[args.length - 1].equalsIgnoreCase(node.getName()) && !args[args.length -1].equalsIgnoreCase(" ")) {
-            return new ArrayList<>(completions);
-        }
-
-        List<FlagData> possibleFlags = node.getParameters().stream()
-                .filter(data -> data instanceof FlagData)
-                .map(data -> (FlagData) data)
-                .collect(Collectors.toList());
-
-        if (!possibleFlags.isEmpty()) {
-            for (FlagData flag : possibleFlags) {
-                String arg = args[args.length - 1];
-                if (RaspberryConstant.FLAG_PATTERN.matcher(arg).matches()
-                        || arg.startsWith("-") && (RaspberryUtils.startsWithIgnoreCase(flag.values()[0], arg.substring(1)))
-                        || arg.equals("-")
-                        || arg.isEmpty() || arg.equals(" ")
-                ) {
-                    completions.add("-" + flag.values()[0]);
-                }
-            }
-        }
-
-        try {
-            List<ParameterData> params = node.getParameters().stream()
-                    .filter(param -> param instanceof ParameterData)
-                    .map(param -> (ParameterData) param)
-                    .collect(Collectors.toList());
-
-            int fixed = Math.max(0, index - 1);
-
-            if (params.isEmpty()) {
-                return new ArrayList<>(completions);
-            }
-
-            ParameterData data = params.get(fixed);
-
-            ParameterTypeAdapter<?> parameterType = raspberry.getCommandHandler().getTypeAdapter(data.clazz());
-
-            if (parameterType != null) {
-                if (index < realArgs.size() && args[index].equalsIgnoreCase(node.getName())) {
-                    realArgs.add("");
-                    ++index;
-                }
-                String argumentBeingCompleted = (index >= realArgs.size() || realArgs.isEmpty()) ? "" : realArgs.get(index).trim();
-
-                String[] tabCompleteFlags = data.tabComplete();
-
-                for (String flag : tabCompleteFlags) {
-                    if (flag.startsWith("@")) {
-                        CommandCompletionAction<?> action = raspberry.getCommandHandler().getCompletions().get(flag);
-
-                        if (action != null) {
-                            Collection<String> suggestions = action.get(new BukkitCommandCompletionContext((RaspberryBukkitCommand) node, argumentBeingCompleted, (BukkitCommandIssuer) issuer));
-                            completions.addAll(suggestions.stream()
-                                    .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, argumentBeingCompleted))
-                                    .collect(Collectors.toList()));
-                        }
-                        continue;
-                    }
-                    if (RaspberryUtils.startsWithIgnoreCase(flag, argumentBeingCompleted)) {
-                        completions.add(flag);
-                    }
-                }
-
-                List<String> suggested = parameterType.complete(issuer, argumentBeingCompleted);
-                completions.addAll(suggested.stream()
-                        .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, argumentBeingCompleted))
-                        .collect(Collectors.toList()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return new ArrayList<>(completions);
+        return raspberry.getCommandHandler().getCompletions(command, issuer, args);
     }
 
     @Override

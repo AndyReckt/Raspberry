@@ -16,12 +16,12 @@ import me.andyreckt.raspberry.data.FlagData;
 import me.andyreckt.raspberry.data.IData;
 import me.andyreckt.raspberry.data.ParameterData;
 import me.andyreckt.raspberry.util.RaspberryConstant;
+import me.andyreckt.raspberry.util.RaspberryUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("rawtypes")
 public class RaspberryCommandHandler {
@@ -52,7 +52,7 @@ public class RaspberryCommandHandler {
     @Getter
     @Setter
     private String unknownCommandMessage;
-    @Getter
+
     private final HashMap<String, CommandCompletionAction> completions = new HashMap<>();
 
     public RaspberryCommandHandler(Raspberry raspberry) {
@@ -125,7 +125,7 @@ public class RaspberryCommandHandler {
             for (int place = 1; place < method.getParameterCount(); place++) {
                 Parameter parameter = method.getParameters()[place];
 
-                if (!parameter.isAnnotationPresent(Param.class) && ! parameter.isAnnotationPresent(Flag.class))
+                if (!parameter.isAnnotationPresent(Param.class) && !parameter.isAnnotationPresent(Flag.class))
                     throw new IllegalArgumentException(
                             "Parameter " + parameter.getName() + " of method " + method.getName() + " in class "
                             + method.getDeclaringClass().getName() + " does not have a Param or Flag annotation."
@@ -158,6 +158,110 @@ public class RaspberryCommandHandler {
         }
 
         return raspberry.createCommand(instance, owningClass, commandData, method, parameters);
+    }
+
+    public List<String> getCompletions(RaspberryCommand command, CommandIssuer issuer, String[] args) {
+        Set<String> completions = new HashSet<>();
+
+        Arguments arguments = this.processArguments(args);
+
+        RaspberryCommand node = command.findCommand(arguments);
+        if (!node.canUse(issuer)) return new ArrayList<>(completions);
+
+        List<String> realArgs = arguments.getArgs();
+
+        int index = realArgs.size() - 1;
+        if (index < 0) index = 0;
+        if (args[args.length -1].equalsIgnoreCase(" ")) index++;
+
+        if (node.hasChild()) {
+            String name = realArgs.isEmpty() ? "" : realArgs.get(realArgs.size() - 1);
+            completions.addAll(node.getChildren().values().stream()
+                    .filter(it -> node.getName() != null && node.canUse(issuer) &&
+                            (RaspberryUtils.startsWithIgnoreCase(node.getName(), name) || name == null || name.isEmpty()))
+                    .map(RaspberryCommand::getName)
+                    .collect(Collectors.toList()));
+
+
+            if (!completions.isEmpty()) {
+                return new ArrayList<>(completions);
+            }
+        }
+
+        if (args[args.length - 1].equalsIgnoreCase(node.getName()) && !args[args.length -1].equalsIgnoreCase(" ")) {
+            return new ArrayList<>(completions);
+        }
+
+        List<FlagData> possibleFlags = node.getParameters().stream()
+                .filter(data -> data instanceof FlagData)
+                .map(data -> (FlagData) data)
+                .collect(Collectors.toList());
+
+        if (!possibleFlags.isEmpty()) {
+            for (FlagData flag : possibleFlags) {
+                String arg = args[args.length - 1];
+                if (RaspberryConstant.FLAG_PATTERN.matcher(arg).matches()
+                        || arg.startsWith("-") && (RaspberryUtils.startsWithIgnoreCase(flag.values()[0], arg.substring(1)))
+                        || arg.equals("-")
+                        || arg.isEmpty() || arg.equals(" ")
+                ) {
+                    completions.add("-" + flag.values()[0]);
+                }
+            }
+        }
+
+        try {
+            List<ParameterData> params = node.getParameters().stream()
+                    .filter(param -> param instanceof ParameterData)
+                    .map(param -> (ParameterData) param)
+                    .collect(Collectors.toList());
+
+            int fixed = Math.max(0, index - 1);
+
+            if (params.isEmpty()) {
+                return new ArrayList<>(completions);
+            }
+
+            ParameterData data = params.get(fixed);
+
+            ParameterTypeAdapter<?> parameterType = this.getTypeAdapter(data.clazz());
+
+            if (parameterType != null) {
+                if (index < realArgs.size() && args[index].equalsIgnoreCase(node.getName())) {
+                    realArgs.add("");
+                    ++index;
+                }
+                String argumentBeingCompleted = (index >= realArgs.size() || realArgs.isEmpty()) ? "" : realArgs.get(index).trim();
+
+                String[] tabCompleteFlags = data.tabComplete();
+
+                for (String flag : tabCompleteFlags) {
+                    if (flag.startsWith("@")) {
+                        CommandCompletionAction<?> action = this.completions.get(flag);
+
+                        if (action != null) {
+                            Collection<String> suggestions = action.get(raspberry.getCommandCompletionContext(node, issuer, argumentBeingCompleted));
+                            completions.addAll(suggestions.stream()
+                                    .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, argumentBeingCompleted))
+                                    .collect(Collectors.toList()));
+                        }
+                        continue;
+                    }
+                    if (RaspberryUtils.startsWithIgnoreCase(flag, argumentBeingCompleted)) {
+                        completions.add(flag);
+                    }
+                }
+
+                List<String> suggested = parameterType.complete(issuer, argumentBeingCompleted);
+                completions.addAll(suggested.stream()
+                        .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, argumentBeingCompleted))
+                        .collect(Collectors.toList()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>(completions);
     }
 
     public void registerTypeAdapter(Class<?> clazz, ParameterTypeAdapter<?> adapter) {

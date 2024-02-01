@@ -9,6 +9,7 @@ import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.command.RaspberryCommand;
 import me.andyreckt.raspberry.command.RaspberryCommandHandler;
 import me.andyreckt.raspberry.completions.CommandCompletionAction;
+import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
 import me.andyreckt.raspberry.data.IData;
 import me.andyreckt.raspberry.util.RaspberryUtils;
@@ -122,6 +123,7 @@ public abstract class Raspberry {
 
     public abstract boolean isCommandIssuer(Class<?> issuer);
     public abstract CommandIssuer<?> getCommandIssuer(Object issuer);
+    public abstract CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input);
 
     public abstract RaspberryCommand createCommand(
             Object instance, Class<?> owningClass,
