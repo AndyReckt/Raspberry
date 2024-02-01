@@ -10,14 +10,6 @@ public class RaspberryBukkitCommand extends RaspberryCommand {
         super();
     }
 
-    public RaspberryBukkitCommand(Class<?> owningClass, Object instance) {
-        super(owningClass, instance);
-    }
-
-    public RaspberryBukkitCommand(String name, String description, String permission) {
-        super(name, description, permission);
-    }
-
     public RaspberryBukkitCommand(CommandData commandData) {
         super(commandData);
     }

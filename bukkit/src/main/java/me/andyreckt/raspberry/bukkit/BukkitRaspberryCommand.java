@@ -46,11 +46,8 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
 
     @Override
     public boolean execute(CommandSender commandSender, String label, String[] args) {
-        if (command.isAsync()) {
-            raspberry.getExecutor().execute(() -> execute0(commandSender, args));
-        } else {
-            execute0(commandSender, args);
-        }
+        if (command.isAsync()) raspberry.getExecutor().execute(() -> execute0(commandSender, args));
+        else execute0(commandSender, args);
 
         return true;
     }

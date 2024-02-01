@@ -206,11 +206,11 @@ public abstract class RaspberryCommand {
     protected abstract Class<?> playerClass();
 
     private boolean isConsoleOnly() {
-        return method != null && method.getParameterTypes()[0].equals(consoleClass());
+        return method != null && !consoleClass().isAssignableFrom(method.getParameterTypes()[0]);
     }
 
     private boolean isPlayerOnly() {
-        return method != null && method.getParameterTypes()[0].equals(playerClass());
+        return method != null && !playerClass().isAssignableFrom(method.getParameterTypes()[0]);
     }
 
     public void invoke(CommandIssuer<?> issuer, Arguments arguments) throws CommandProcessException {

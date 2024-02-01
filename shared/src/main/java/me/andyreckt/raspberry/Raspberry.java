@@ -19,6 +19,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
 
 
@@ -30,7 +31,7 @@ public abstract class Raspberry {
 
     protected final RaspberryCommand rootCommand;
     private final RaspberryCommandHandler commandHandler;
-    private final Executor executor = Executors.newFixedThreadPool(2);
+    private final Executor executor = ForkJoinPool.commonPool();
     protected Logger logger = Logger.getLogger("Raspberry");
 
     private boolean debugMode = false;

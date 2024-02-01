@@ -21,3 +21,5 @@ if (examplesDir.exists() && examplesDir.isDirectory()) {
         }
     }
 }
+include 'velocity'
+

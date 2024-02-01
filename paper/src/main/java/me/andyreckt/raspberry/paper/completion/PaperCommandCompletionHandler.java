@@ -4,9 +4,6 @@ import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.andyreckt.raspberry.RaspberryPaper;
-import me.andyreckt.raspberry.arguments.Arguments;
-import me.andyreckt.raspberry.bukkit.BukkitRaspberryCommand;
-import me.andyreckt.raspberry.command.BukkitCommandIssuer;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.command.RaspberryCommand;
 import me.andyreckt.raspberry.exception.CompletionFailedException;
@@ -58,10 +55,10 @@ public class PaperCommandCompletionHandler implements Listener {
 
         List<String> completions = raspberry.getCommandHandler().getCompletions(command, issuer, args);
 
-        return preformOnImmutable(existingCompletions, (list) -> list.addAll(completions));
+        return performOnImmutable(existingCompletions, (list) -> list.addAll(completions));
     }
 
-    private <T> List<T> preformOnImmutable(List<T> list, Consumer<List<T>> action) {
+    private <T> List<T> performOnImmutable(List<T> list, Consumer<List<T>> action) {
         try {
             action.accept(list);
         } catch (UnsupportedOperationException ex) {
