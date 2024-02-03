@@ -120,7 +120,7 @@ public abstract class Raspberry {
         }
     }
 
-    public abstract void injectCommand(RaspberryCommand commands);
+    public abstract void injectCommand(RaspberryCommand command);
 
     public abstract boolean isCommandIssuer(Class<?> issuer);
     public abstract CommandIssuer<?> getCommandIssuer(Object issuer);
