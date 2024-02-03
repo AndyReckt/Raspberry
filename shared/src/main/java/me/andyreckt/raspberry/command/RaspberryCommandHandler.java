@@ -157,8 +157,42 @@ public class RaspberryCommandHandler {
             }
         }
 
-        return raspberry.createCommand(instance, owningClass, commandData, method, parameters);
+        return this.createCommand(instance, owningClass, commandData, method, parameters);
     }
+
+    public RaspberryCommand createCommand(
+            Object instance, Class<?> owningClass,
+            CommandData commandData, Method method,
+            List<IData> parameters) {
+        if (commandData.parent() != null) {
+            RaspberryCommand parent = raspberry.getRootCommand().findChild(commandData.parent().name());
+
+            if (parent == null) {
+                parent = raspberry.createCommand(commandData.parent());
+                parent.setOwningClass(owningClass);
+                parent.setOwningInstance(instance);
+                raspberry.getRootCommand().registerChildren(parent);
+            }
+
+            RaspberryCommand child = raspberry.createCommand(commandData);
+            child.setMethod(method);
+            child.setOwningInstance(instance);
+            child.setOwningClass(owningClass);
+            child.setParameters(parameters);
+
+            parent.registerChildren(child);
+            return parent;
+        }
+
+        RaspberryCommand command = raspberry.createCommand(commandData);
+        command.setMethod(method);
+        command.setOwningInstance(instance);
+        command.setOwningClass(owningClass);
+        command.setParameters(parameters);
+
+        raspberry.getRootCommand().registerChildren(command);
+        return command;
+    };
 
     public List<String> getCompletions(RaspberryCommand command, CommandIssuer issuer, String[] args) {
         Set<String> completions = new HashSet<>();

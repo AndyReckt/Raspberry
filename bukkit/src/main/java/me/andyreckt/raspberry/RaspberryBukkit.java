@@ -70,40 +70,9 @@ public class RaspberryBukkit extends Raspberry {
         return new BukkitCommandCompletionContext((RaspberryBukkitCommand) command, input, (BukkitCommandIssuer) issuer);
     }
 
-    @Override
-    public RaspberryCommand createCommand(
-            Object instance, Class<?> owningClass,
-            CommandData commandData, Method method,
-            List<IData> parameters) {
-
-        if (commandData.parent() != null) {
-            RaspberryCommand parent = rootCommand.findChild(commandData.parent().name());
-
-            if (parent == null) {
-                parent = new RaspberryBukkitCommand(commandData.parent());
-                parent.setOwningClass(owningClass);
-                parent.setOwningInstance(instance);
-                rootCommand.registerChildren(parent);
-            }
-
-            RaspberryBukkitCommand child = new RaspberryBukkitCommand(commandData);
-            child.setMethod(method);
-            child.setOwningInstance(instance);
-            child.setOwningClass(owningClass);
-            child.setParameters(parameters);
-
-            parent.registerChildren(child);
-            return parent;
-        }
-
-        RaspberryBukkitCommand command = new RaspberryBukkitCommand(commandData);
-        command.setMethod(method);
-        command.setOwningInstance(instance);
-        command.setOwningClass(owningClass);
-        command.setParameters(parameters);
-
-        rootCommand.registerChildren(command);
-        return command;
+    @Override @SuppressWarnings("unchecked")
+    public RaspberryBukkitCommand createCommand(CommandData data) {
+        return new RaspberryBukkitCommand(data);
     }
 
     @Override

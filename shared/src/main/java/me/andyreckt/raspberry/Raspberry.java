@@ -125,12 +125,7 @@ public abstract class Raspberry {
     public abstract boolean isCommandIssuer(Class<?> issuer);
     public abstract CommandIssuer<?> getCommandIssuer(Object issuer);
     public abstract CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input);
-
-    public abstract RaspberryCommand createCommand(
-            Object instance, Class<?> owningClass,
-            CommandData commandData, Method method,
-            List<IData> parameters
-    );
+    public abstract <T extends RaspberryCommand> T createCommand(CommandData data);
 
     /**
      * Gets the default message sent to a user when they do not have permission to execute a command.

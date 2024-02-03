@@ -67,40 +67,9 @@ public class RaspberryVelocity extends Raspberry {
         return new VelocityCommandCompletionContext((RaspberryVelocityCommand) command, input, (VelocityCommandIssuer) issuer);
     }
 
-    @Override
-    public RaspberryCommand createCommand(
-            Object instance, Class<?> owningClass,
-            CommandData commandData, Method method,
-            List<IData> parameters) {
-
-        if (commandData.parent() != null) {
-            RaspberryCommand parent = rootCommand.findChild(commandData.parent().name());
-
-            if (parent == null) {
-                parent = new RaspberryVelocityCommand(commandData.parent());
-                parent.setOwningClass(owningClass);
-                parent.setOwningInstance(instance);
-                rootCommand.registerChildren(parent);
-            }
-
-            RaspberryVelocityCommand child = new RaspberryVelocityCommand(commandData);
-            child.setMethod(method);
-            child.setOwningInstance(instance);
-            child.setOwningClass(owningClass);
-            child.setParameters(parameters);
-
-            parent.registerChildren(child);
-            return parent;
-        }
-
-        RaspberryVelocityCommand command = new RaspberryVelocityCommand(commandData);
-        command.setMethod(method);
-        command.setOwningInstance(instance);
-        command.setOwningClass(owningClass);
-        command.setParameters(parameters);
-
-        rootCommand.registerChildren(command);
-        return command;
+    @Override @SuppressWarnings("unchecked")
+    public RaspberryVelocityCommand createCommand(CommandData data) {
+        return new RaspberryVelocityCommand(data);
     }
 
     @Override
