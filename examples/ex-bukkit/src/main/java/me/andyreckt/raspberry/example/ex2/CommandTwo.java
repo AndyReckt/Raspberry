@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class CommandTwo {
 
     @Command(names = "two")
-    public void CommandTwo(Player sender) {
+    public void commandTwo(Player sender) {
         sender.sendMessage("Hello from command two!");
     }
 

@@ -23,7 +23,7 @@ public class CommandThree {
     }
 
     @Children(names = {"a", "b"})
-    public void childThree(CommandSender sender, @Param(name = "c", wildcard = true, tabComplete = "aze aze aze") String param0, @Flag(values = "f") boolean param1) {
+    public void childThree(CommandSender sender, @Param(name = "c", wildcard = true, tabComplete = {"aze aze aze", "@players"}) String param0, @Flag(values = "f") boolean param1) {
         sender.sendMessage("Hello from child a & b!");
         sender.sendMessage("param0: " + param0);
         sender.sendMessage("param1: " + param1);

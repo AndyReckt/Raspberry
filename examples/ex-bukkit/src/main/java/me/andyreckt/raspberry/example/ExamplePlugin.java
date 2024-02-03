@@ -7,9 +7,12 @@ import me.andyreckt.raspberry.RaspberryPaper;
 import me.andyreckt.raspberry.example.ex1.CommandOne;
 import me.andyreckt.raspberry.example.ex2.CommandTwo;
 import me.andyreckt.raspberry.example.ex3.CommandThree;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Getter
 public class ExamplePlugin extends JavaPlugin {
@@ -29,6 +32,7 @@ public class ExamplePlugin extends JavaPlugin {
         this.raspberry.registerCommands(new CommandTwo());
         this.raspberry.registerCommands(new CommandThree());
 
+        this.raspberry.registerAsyncCompletion("players", (context) -> Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
         this.raspberry.registerAsyncCompletion("test", x -> Arrays.asList("test1", "test2", "test3"));
     }
 }
