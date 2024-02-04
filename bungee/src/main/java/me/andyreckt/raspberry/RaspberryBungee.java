@@ -1,6 +1,7 @@
 package me.andyreckt.raspberry;
 
 import lombok.Getter;
+import me.andyreckt.raspberry.adapter.defaults.BungeeTypeAdapters;
 import me.andyreckt.raspberry.bungee.BungeeRaspberryCommand;
 import me.andyreckt.raspberry.bungee.completion.BungeeCommandCompletionContext;
 import me.andyreckt.raspberry.command.BungeeCommandIssuer;
@@ -10,6 +11,8 @@ import me.andyreckt.raspberry.command.RaspberryCommand;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class RaspberryBungee extends Raspberry {
@@ -23,6 +26,9 @@ public class RaspberryBungee extends Raspberry {
         super(new RaspberryBungeeCommand());
         bungeeInstance = this;
         this.plugin = plugin;
+
+        this.registerTypeAdapter(ProxiedPlayer.class, BungeeTypeAdapters.PROXIED_PLAYER);
+        this.registerTypeAdapter(ServerInfo.class, BungeeTypeAdapters.SERVER_INFO);
     }
 
     @Override

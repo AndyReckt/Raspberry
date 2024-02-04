@@ -4,8 +4,12 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import lombok.Getter;
+import me.andyreckt.raspberry.adapter.defaults.VelocityTypeAdapters;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.command.RaspberryCommand;
 import me.andyreckt.raspberry.command.RaspberryVelocityCommand;
@@ -25,14 +29,16 @@ public class RaspberryVelocity extends Raspberry {
     private static RaspberryVelocity velocityInstance;
 
     private final ProxyServer proxy;
-    private final PluginContainer plugin;
 
-    public RaspberryVelocity(ProxyServer proxy, Object plugin) {
+    public RaspberryVelocity(ProxyServer proxy) {
         super(new RaspberryVelocityCommand());
         velocityInstance = this;
 
         this.proxy = proxy;
-        this.plugin = proxy.getPluginManager().getPlugin(plugin.getClass().getAnnotation(Plugin.class).id()).get();
+
+        this.registerTypeAdapter(Player.class, VelocityTypeAdapters.PLAYER);
+        this.registerTypeAdapter(ServerInfo.class, VelocityTypeAdapters.SERVER_INFO);
+        this.registerTypeAdapter(RegisteredServer.class, VelocityTypeAdapters.REGISTERED_SERVER);
     }
 
     @Override

@@ -37,9 +37,7 @@ public class BukkitTypeAdapters {
             List<String> completions = new ArrayList<>();
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (RaspberryUtils.startsWithIgnoreCase(player.getName(), source)) {
-                    completions.add(player.getName());
-                }
+                completions.add(player.getName());
             }
 
             return completions;
@@ -71,9 +69,7 @@ public class BukkitTypeAdapters {
             List<String> completions = new ArrayList<>();
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (RaspberryUtils.startsWithIgnoreCase(player.getName(), source)) {
-                    completions.add(player.getName());
-                }
+                completions.add(player.getName());
             }
 
             return completions;

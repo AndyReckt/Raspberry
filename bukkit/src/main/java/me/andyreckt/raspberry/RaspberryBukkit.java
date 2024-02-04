@@ -53,8 +53,7 @@ public class RaspberryBukkit extends Raspberry {
 
     @Override
     public void injectCommand(RaspberryCommand command) {
-        RaspberryBukkitCommand bukkitCommand = (RaspberryBukkitCommand) command;
-        commandMap.register(plugin.getName(), new BukkitRaspberryCommand(bukkitCommand, plugin));
+        commandMap.register(plugin.getName(), new BukkitRaspberryCommand((RaspberryBukkitCommand) command, plugin));
     }
 
     @Override
