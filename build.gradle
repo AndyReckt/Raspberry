@@ -2,11 +2,9 @@ plugins {
     id 'idea'
     id 'java'
     id 'maven-publish'
+    id 'org.ajoberstar.grgit' version "5.2.1"
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
-
-group = 'me.andyreckt'
-version = '1.0'
 
 repositories {
     maven {
@@ -14,25 +12,20 @@ repositories {
     }
 }
 
-dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-}
-
 publishing {
     repositories {
-//        maven {
-//            name 'mincatsRepo'
-//            url 'https://repo.mincats.eu/private'
-//            credentials(PasswordCredentials)
-//        }
+        maven {
+            name 'mincatsRepo'
+            url 'https://repo.mincats.eu/public'
+            credentials(PasswordCredentials)
+        }
     }
 
     publications {
         shadow(MavenPublication) {
-            groupId "$group"
+            groupId "me.andyreckt.raspberry"
             artifactId 'parent'
-            version "$version"
+            version "1.0.0"
 
             from components.java
         }
@@ -40,6 +33,67 @@ publishing {
 }
 
 allprojects {
-    group "$group"
-    version "$version"
+    group "me.andyreckt.raspberry"
+    version "1.0.0"
+
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+
+    repositories {
+        maven {
+            url 'https://repo.mincats.eu/mirrors'
+        }
+    }
+}
+
+subprojects {
+    apply plugin: "idea"
+    apply plugin: "java"
+    apply plugin: "com.github.johnrengelman.shadow"
+    apply plugin: "maven-publish"
+    apply plugin: "org.ajoberstar.grgit"
+
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    jar {
+        classifier = "jar"
+    }
+
+    shadowJar {
+        classifier = ''
+        archiveFileName = "raspberry-${project.name}-${project.version}-${grgit.head().abbreviatedId}-${grgit.branch.current().name}.jar"
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.30'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name 'mincatsRepo'
+                url 'https://repo.mincats.eu/public'
+                credentials(PasswordCredentials)
+            }
+        }
+
+        publications {
+            shadow(MavenPublication) { publication ->
+                groupId "me.andyreckt.raspberry"
+                artifactId "$project.name"
+                version "1.0.0"
+
+                publication.artifact shadowJar
+//                from components.java
+            }
+        }
+    }
 }
