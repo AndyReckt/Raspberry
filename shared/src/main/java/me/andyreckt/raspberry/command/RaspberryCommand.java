@@ -129,6 +129,8 @@ public abstract class RaspberryCommand {
 
         StringBuilder builder = new StringBuilder();
 
+        builder.append(getFullLabel()).append(" ");
+
         List<FlagData> flags = parameters.stream()
                 .filter(data -> data instanceof FlagData)
                 .map(data -> (FlagData) data)
@@ -193,7 +195,7 @@ public abstract class RaspberryCommand {
         List<String> labels = new ArrayList<>();
         RaspberryCommand command = this;
 
-        while (command != null) {
+        while (command != null && command != Raspberry.getInstance().getRootCommand()) {
             labels.add(command.getName());
             command = command.getParent();
         }

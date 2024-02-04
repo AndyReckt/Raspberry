@@ -39,7 +39,7 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
 
         this.setAliases(command.getRealAliases());
         this.setDescription(command.getDescription());
-        this.setUsage(command.getUsage());
+        this.setUsage(RaspberryBukkitUtils.color("&c" + command.getUsage()));
         this.setPermission(command.getPermission());
         this.setPermissionMessage(raspberry.getCommandHandler().getNoPermissionMessage());
     }
@@ -70,7 +70,7 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
             else sender.sendMessage(RaspberryBukkitUtils.color("&cThis command can only be executed by a player."));
         } catch (InvalidArgumentException ex) {
             sender.sendMessage(RaspberryBukkitUtils.color("&c" + ex.getMessage()));
-            sender.sendMessage(RaspberryBukkitUtils.color(executionNode.getUsage()));
+            if (ex.showSyntax()) sender.sendMessage(RaspberryBukkitUtils.color("&cUsage: &7" + executionNode.getUsage()));
         } catch (IllegalArgumentException ex) {
             sender.sendMessage(RaspberryBukkitUtils.color("&cAn internal error occurred while attempting to perform this command."));
             raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + " for " + sender.getName() + ":");

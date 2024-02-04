@@ -69,14 +69,14 @@ public class VelocityRaspberryCommand implements SimpleCommand {
             else sender.sendMessage(RaspberryVelocityUtils.color("&cThis command can only be executed by a player."));
         } catch (InvalidArgumentException ex) {
             sender.sendMessage(RaspberryVelocityUtils.color("&c" + ex.getMessage()));
-            sender.sendMessage(RaspberryVelocityUtils.color(executionNode.getUsage()));
+            if (ex.showSyntax()) sender.sendMessage(RaspberryVelocityUtils.color("&cUsage: &7" + executionNode.getUsage()));
         } catch (IllegalArgumentException ex) {
             sender.sendMessage(RaspberryVelocityUtils.color("&cAn internal error occurred while attempting to perform this command."));
-            raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + " for " + sender.getName() + ":");
+            raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + ":");
             ex.printStackTrace();
         } catch (MethodFailedException ex) {
             sender.sendMessage(RaspberryVelocityUtils.color("&cAn internal error occurred while attempting to perform this command."));
-            raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + " for " + sender.getName() + ":");
+            raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + ":");
             raspberry.getLogger().severe(ex.getMessage());
             ex.cause.printStackTrace();
         }

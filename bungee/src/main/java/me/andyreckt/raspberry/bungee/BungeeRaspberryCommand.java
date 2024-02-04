@@ -59,7 +59,7 @@ public class BungeeRaspberryCommand extends Command implements TabExecutor {
             else sender.sendMessage(RaspberryBungeeUtils.color("&cThis command can only be executed by a player."));
         } catch (InvalidArgumentException ex) {
             sender.sendMessage(RaspberryBungeeUtils.color("&c" + ex.getMessage()));
-            sender.sendMessage(RaspberryBungeeUtils.color(executionNode.getUsage()));
+            if (ex.showSyntax()) sender.sendMessage(RaspberryBungeeUtils.color("&cUsage: &7" + executionNode.getUsage()));
         } catch (IllegalArgumentException ex) {
             sender.sendMessage(RaspberryBungeeUtils.color("&cAn internal error occurred while attempting to perform this command."));
             raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + " for " + sender.getName() + ":");
