@@ -3,7 +3,7 @@ package me.andyreckt.raspberry.command;
 import lombok.Getter;
 import lombok.Setter;
 import me.andyreckt.raspberry.Raspberry;
-import me.andyreckt.raspberry.adapter.ParameterTypeAdapter;
+import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.adapter.defaults.PrimitiveTypeAdapters;
 import me.andyreckt.raspberry.annotation.Children;
 import me.andyreckt.raspberry.annotation.Command;
@@ -28,7 +28,7 @@ public class RaspberryCommandHandler {
 
     private final Raspberry raspberry;
 
-    private final HashMap<Class<?>, ParameterTypeAdapter<?>> typeAdapters = new HashMap<Class<?>, ParameterTypeAdapter<?>>() {{
+    private final HashMap<Class<?>, RaspberryTypeAdapter<?>> typeAdapters = new HashMap<Class<?>, RaspberryTypeAdapter<?>>() {{
         put(boolean.class, PrimitiveTypeAdapters.BOOLEAN);
         put(Boolean.class, PrimitiveTypeAdapters.BOOLEAN);
         put(double.class, PrimitiveTypeAdapters.DOUBLE);
@@ -60,7 +60,7 @@ public class RaspberryCommandHandler {
         this.unknownCommandMessage = raspberry.getDefaultUnknownCommandMessage();
     }
 
-    public ParameterTypeAdapter<?> getTypeAdapter(Class<?> clazz) {
+    public RaspberryTypeAdapter<?> getTypeAdapter(Class<?> clazz) {
         return typeAdapters.get(clazz);
     }
 
@@ -258,7 +258,7 @@ public class RaspberryCommandHandler {
 
             ParameterData data = params.get(fixed);
 
-            ParameterTypeAdapter<?> parameterType = this.getTypeAdapter(data.clazz());
+            RaspberryTypeAdapter<?> parameterType = this.getTypeAdapter(data.clazz());
 
             if (parameterType != null) {
                 if (index < realArgs.size() && args[index].equalsIgnoreCase(node.getName())) {
@@ -298,7 +298,7 @@ public class RaspberryCommandHandler {
         return new ArrayList<>(completions);
     }
 
-    public void registerTypeAdapter(Class<?> clazz, ParameterTypeAdapter<?> adapter) {
+    public void registerTypeAdapter(Class<?> clazz, RaspberryTypeAdapter<?> adapter) {
         typeAdapters.put(clazz, adapter);
     }
 

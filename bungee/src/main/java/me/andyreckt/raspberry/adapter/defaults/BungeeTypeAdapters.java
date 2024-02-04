@@ -1,7 +1,7 @@
 package me.andyreckt.raspberry.adapter.defaults;
 
 import lombok.experimental.UtilityClass;
-import me.andyreckt.raspberry.adapter.ParameterTypeAdapter;
+import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.exception.InvalidArgumentException;
 import net.md_5.bungee.api.ProxyServer;
@@ -14,7 +14,7 @@ import java.util.List;
 @UtilityClass
 @SuppressWarnings({"rawtypes"})
 public class BungeeTypeAdapters {
-    public ParameterTypeAdapter<ProxiedPlayer> PROXIED_PLAYER = new ParameterTypeAdapter<ProxiedPlayer>() {
+    public RaspberryTypeAdapter<ProxiedPlayer> PROXIED_PLAYER = new RaspberryTypeAdapter<ProxiedPlayer>() {
         @Override
         public ProxiedPlayer transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
@@ -42,7 +42,7 @@ public class BungeeTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<ServerInfo> SERVER_INFO = new ParameterTypeAdapter<ServerInfo>() {
+    public RaspberryTypeAdapter<ServerInfo> SERVER_INFO = new RaspberryTypeAdapter<ServerInfo>() {
         @Override
         public ServerInfo transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             ServerInfo server = ProxyServer.getInstance().getServerInfo(source);

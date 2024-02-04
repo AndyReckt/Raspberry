@@ -2,7 +2,7 @@ package me.andyreckt.raspberry;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.andyreckt.raspberry.adapter.ParameterTypeAdapter;
+import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.annotation.Children;
 import me.andyreckt.raspberry.annotation.Command;
 import me.andyreckt.raspberry.command.CommandIssuer;
@@ -11,14 +11,12 @@ import me.andyreckt.raspberry.command.RaspberryCommandHandler;
 import me.andyreckt.raspberry.completions.CommandCompletionAction;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
-import me.andyreckt.raspberry.data.IData;
 import me.andyreckt.raspberry.util.RaspberryUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
 
@@ -158,7 +156,7 @@ public abstract class Raspberry {
      * @param clazz the class to return when transformed. (IE: <code>int.class</code>)
      * @param adapter the ParameterTypeAdapter object to register from. (IE: <code>new IntTypeAdapter()</code> or <code>new ParameterTypeAdapter< Object >()</code>)
      */
-    public void registerTypeAdapter(Class<?> clazz, ParameterTypeAdapter<?> adapter) {
+    public void registerTypeAdapter(Class<?> clazz, RaspberryTypeAdapter<?> adapter) {
         commandHandler.registerTypeAdapter(clazz, adapter);
     }
 

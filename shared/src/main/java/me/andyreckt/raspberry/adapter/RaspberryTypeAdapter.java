@@ -6,7 +6,7 @@ import me.andyreckt.raspberry.exception.InvalidArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ParameterTypeAdapter<T> {
+public interface RaspberryTypeAdapter<T> {
     List<String> EMPTY_LIST = new ArrayList<>();
 
     T transform(CommandIssuer sender, String source) throws InvalidArgumentException;

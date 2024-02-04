@@ -1,10 +1,9 @@
 package me.andyreckt.raspberry.adapter.defaults;
 
 import lombok.experimental.UtilityClass;
-import me.andyreckt.raspberry.adapter.ParameterTypeAdapter;
+import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.exception.InvalidArgumentException;
-import me.andyreckt.raspberry.util.RaspberryUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -16,7 +15,7 @@ import java.util.Map;
 @UtilityClass
 @SuppressWarnings({"rawtypes", "deprecation"})
 public class BukkitTypeAdapters {
-    public ParameterTypeAdapter<OfflinePlayer> OFFLINE_PLAYER = new ParameterTypeAdapter<OfflinePlayer>() {
+    public RaspberryTypeAdapter<OfflinePlayer> OFFLINE_PLAYER = new RaspberryTypeAdapter<OfflinePlayer>() {
         @Override
         public OfflinePlayer transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
@@ -44,7 +43,7 @@ public class BukkitTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<Player> PLAYER = new ParameterTypeAdapter<Player>() {
+    public RaspberryTypeAdapter<Player> PLAYER = new RaspberryTypeAdapter<Player>() {
         @Override
         public Player transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
@@ -76,7 +75,7 @@ public class BukkitTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<World> WORLD = new ParameterTypeAdapter<World>() {
+    public RaspberryTypeAdapter<World> WORLD = new RaspberryTypeAdapter<World>() {
         @Override
         public World transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             World world = Bukkit.getServer().getWorld(source);
@@ -100,7 +99,7 @@ public class BukkitTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<Material> MATERIAL = new ParameterTypeAdapter<Material>() {
+    public RaspberryTypeAdapter<Material> MATERIAL = new RaspberryTypeAdapter<Material>() {
         @Override
         public Material transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             Material material = Material.matchMaterial(source.toUpperCase());
@@ -139,7 +138,7 @@ public class BukkitTypeAdapters {
         put("3", GameMode.SPECTATOR);
     }};
 
-    public ParameterTypeAdapter<GameMode> GAMEMODE = new ParameterTypeAdapter<GameMode>() {
+    public RaspberryTypeAdapter<GameMode> GAMEMODE = new RaspberryTypeAdapter<GameMode>() {
         @Override
         public GameMode transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             GameMode gameMode = GAMEMODES.get(source.toLowerCase());

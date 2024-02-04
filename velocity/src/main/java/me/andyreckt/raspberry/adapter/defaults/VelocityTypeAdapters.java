@@ -5,7 +5,7 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import lombok.experimental.UtilityClass;
 import me.andyreckt.raspberry.RaspberryVelocity;
-import me.andyreckt.raspberry.adapter.ParameterTypeAdapter;
+import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.exception.InvalidArgumentException;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class VelocityTypeAdapters {
     private final RaspberryVelocity plugin = RaspberryVelocity.getVelocityInstance();
 
-    public ParameterTypeAdapter<Player> PLAYER = new ParameterTypeAdapter<Player>() {
+    public RaspberryTypeAdapter<Player> PLAYER = new RaspberryTypeAdapter<Player>() {
         @Override
         public Player transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
@@ -39,7 +39,7 @@ public class VelocityTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<ServerInfo> SERVER_INFO = new ParameterTypeAdapter<ServerInfo>() {
+    public RaspberryTypeAdapter<ServerInfo> SERVER_INFO = new RaspberryTypeAdapter<ServerInfo>() {
         @Override
         public ServerInfo transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             return plugin.getProxy().getServer(source).orElseThrow(() -> new InvalidArgumentException("Server '" + source + "' not found.")).getServerInfo();
@@ -57,7 +57,7 @@ public class VelocityTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<RegisteredServer> REGISTERED_SERVER = new ParameterTypeAdapter<RegisteredServer>() {
+    public RaspberryTypeAdapter<RegisteredServer> REGISTERED_SERVER = new RaspberryTypeAdapter<RegisteredServer>() {
         @Override
         public RegisteredServer transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             return plugin.getProxy().getServer(source).orElseThrow(() -> new InvalidArgumentException("Server '" + source + "' not found."));

@@ -4,7 +4,7 @@ package me.andyreckt.raspberry.command;
 import lombok.Getter;
 import lombok.Setter;
 import me.andyreckt.raspberry.Raspberry;
-import me.andyreckt.raspberry.adapter.ParameterTypeAdapter;
+import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.arguments.Arguments;
 import me.andyreckt.raspberry.data.CommandData;
 import me.andyreckt.raspberry.data.FlagData;
@@ -272,7 +272,7 @@ public abstract class RaspberryCommand {
                     argument = arguments.join(index);
                 }
 
-                ParameterTypeAdapter<?> adapter = Raspberry.getInstance().getCommandHandler().getTypeAdapter(parameterData.clazz());
+                RaspberryTypeAdapter<?> adapter = Raspberry.getInstance().getCommandHandler().getTypeAdapter(parameterData.clazz());
 
                 if (adapter == null) {
                     throw new IllegalArgumentException("No adapter found for class " + parameterData.clazz().getName() + ".");

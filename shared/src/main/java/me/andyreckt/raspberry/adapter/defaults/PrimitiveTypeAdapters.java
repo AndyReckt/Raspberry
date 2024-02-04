@@ -1,7 +1,7 @@
 package me.andyreckt.raspberry.adapter.defaults;
 
 import lombok.experimental.UtilityClass;
-import me.andyreckt.raspberry.adapter.ParameterTypeAdapter;
+import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.exception.InvalidArgumentException;
 import me.andyreckt.raspberry.util.RaspberryUtils;
@@ -23,7 +23,7 @@ public class PrimitiveTypeAdapters {
         put("no", false);
     }};
 
-    public ParameterTypeAdapter<Boolean> BOOLEAN = new ParameterTypeAdapter<Boolean>() {
+    public RaspberryTypeAdapter<Boolean> BOOLEAN = new RaspberryTypeAdapter<Boolean>() {
         @Override
         public Boolean transform(CommandIssuer sender, String source) throws InvalidArgumentException {
             if (!BOOLEAN_MAP.containsKey(source.toLowerCase())) {
@@ -39,7 +39,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<Double> DOUBLE = (sender, source) -> {
+    public RaspberryTypeAdapter<Double> DOUBLE = (sender, source) -> {
         if (source.toLowerCase().contains("e")) {
             throw new InvalidArgumentException("'" + source + "' is not a valid number.");
         }
@@ -57,7 +57,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<Float> FLOAT = (sender, source) -> {
+    public RaspberryTypeAdapter<Float> FLOAT = (sender, source) -> {
         if (source.toLowerCase().contains("e")) {
             throw new InvalidArgumentException("'" + source + "' is not a valid number.");
         }
@@ -75,7 +75,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<Integer> INTEGER = (sender, source) -> {
+    public RaspberryTypeAdapter<Integer> INTEGER = (sender, source) -> {
         try {
             return Integer.parseInt(source);
         } catch (NumberFormatException exception) {
@@ -83,7 +83,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<Long> LONG = (sender, source) -> {
+    public RaspberryTypeAdapter<Long> LONG = (sender, source) -> {
         try {
             return Long.parseLong(source);
         } catch (NumberFormatException exception) {
@@ -91,7 +91,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<Short> SHORT = (sender, source) -> {
+    public RaspberryTypeAdapter<Short> SHORT = (sender, source) -> {
         try {
             return Short.parseShort(source);
         } catch (NumberFormatException exception) {
@@ -99,9 +99,9 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public ParameterTypeAdapter<String> STRING = (sender, source) -> source;
+    public RaspberryTypeAdapter<String> STRING = (sender, source) -> source;
 
-    public ParameterTypeAdapter<Character> CHARACTER = (sender, source) -> {
+    public RaspberryTypeAdapter<Character> CHARACTER = (sender, source) -> {
         if (source.length() != 1) {
             throw new InvalidArgumentException("'" + source + "' is not a valid character.");
         }
