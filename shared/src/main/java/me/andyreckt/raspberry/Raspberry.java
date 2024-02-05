@@ -69,8 +69,7 @@ public abstract class Raspberry {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!Modifier.isStatic(method.getModifiers())) continue;
             if (!method.isAnnotationPresent(Command.class) && !method.isAnnotationPresent(Children.class)) continue;
-            RaspberryCommand command = commandHandler.processCommand(method, null);
-            injectCommand(command);
+            commandHandler.processCommand(method, null).forEach(this::injectCommand);
         }
     }
 
@@ -83,8 +82,7 @@ public abstract class Raspberry {
     public void registerCommands(Object instance) {
         for (Method method : instance.getClass().getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Command.class) && !method.isAnnotationPresent(Children.class)) continue;
-            RaspberryCommand command = commandHandler.processCommand(method, instance);
-            injectCommand(command);
+            commandHandler.processCommand(method, instance).forEach(this::injectCommand);
         }
     }
 
