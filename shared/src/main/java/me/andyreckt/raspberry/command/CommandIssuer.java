@@ -1,5 +1,8 @@
 package me.andyreckt.raspberry.command;
 
+import me.andyreckt.raspberry.util.ClickablePart;
+
+import java.util.List;
 import java.util.UUID;
 
 public interface CommandIssuer<T> {
@@ -12,4 +15,6 @@ public interface CommandIssuer<T> {
     UUID getUniqueId();
 
     boolean hasPermission(String permission);
+
+    void sendClickable(List<ClickablePart> parts);
 }

@@ -10,10 +10,13 @@ import me.andyreckt.raspberry.command.RaspberryBungeeCommand;
 import me.andyreckt.raspberry.command.RaspberryCommand;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
+import me.andyreckt.raspberry.util.ClickablePart;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+
+import java.util.List;
 
 public class RaspberryBungee extends Raspberry {
 
@@ -53,6 +56,12 @@ public class RaspberryBungee extends Raspberry {
     @Override
     public CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input) {
         return new BungeeCommandCompletionContext((RaspberryBungeeCommand) command, input, (BungeeCommandIssuer) issuer);
+    }
+
+    @Override
+    public void sendClickable(CommandIssuer<?> issuer, List<ClickablePart> parts) {
+        BungeeCommandIssuer bungeeIssuer = (BungeeCommandIssuer) issuer;
+        bungeeIssuer.sendClickable(parts);
     }
 
     @Override

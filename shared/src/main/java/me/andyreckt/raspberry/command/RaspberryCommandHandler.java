@@ -15,6 +15,8 @@ import me.andyreckt.raspberry.data.CommandData;
 import me.andyreckt.raspberry.data.FlagData;
 import me.andyreckt.raspberry.data.IData;
 import me.andyreckt.raspberry.data.ParameterData;
+import me.andyreckt.raspberry.help.HelpBuilder;
+import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.util.RaspberryConstant;
 import me.andyreckt.raspberry.util.RaspberryUtils;
 
@@ -193,6 +195,16 @@ public class RaspberryCommandHandler {
         raspberry.getRootCommand().registerChildren(command);
         return command;
     };
+
+    public void sendHelp(RaspberryCommand command, CommandIssuer<?> issuer, int page) {
+        HelpBuilder builder = new HelpBuilder(issuer, command, page);
+
+        builder.build().forEach(issuer::sendClickable);
+    }
+
+    public void sendHelp(List<List<ClickablePart>> parts, CommandIssuer<?> issuer) {
+        parts.forEach(issuer::sendClickable);
+    }
 
     public List<String> getCompletions(RaspberryCommand command, CommandIssuer issuer, String[] args) {
         Set<String> completions = new HashSet<>();

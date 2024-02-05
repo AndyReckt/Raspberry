@@ -9,6 +9,7 @@ import me.andyreckt.raspberry.completions.CommandCompletionAction;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
 import me.andyreckt.raspberry.data.IData;
+import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.util.RaspberryBukkitConstant;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -67,6 +68,12 @@ public class RaspberryBukkit extends Raspberry {
     @Override
     public CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input) {
         return new BukkitCommandCompletionContext((RaspberryBukkitCommand) command, input, (BukkitCommandIssuer) issuer);
+    }
+
+    @Override
+    public void sendClickable(CommandIssuer<?> issuer, List<ClickablePart> parts) {
+        BukkitCommandIssuer bukkitIssuer = (BukkitCommandIssuer) issuer;
+        bukkitIssuer.sendClickable(parts);
     }
 
     @Override @SuppressWarnings("unchecked")

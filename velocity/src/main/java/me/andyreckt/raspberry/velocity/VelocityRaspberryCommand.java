@@ -11,6 +11,7 @@ import me.andyreckt.raspberry.exception.InvalidArgumentException;
 import me.andyreckt.raspberry.exception.InvalidExecutorException;
 import me.andyreckt.raspberry.exception.MethodFailedException;
 import me.andyreckt.raspberry.exception.UnknownCommandException;
+import me.andyreckt.raspberry.message.IErrorMessageFormatter;
 import me.andyreckt.raspberry.util.RaspberryVelocityUtils;
 
 import java.util.List;
@@ -53,29 +54,42 @@ public class VelocityRaspberryCommand implements SimpleCommand {
         Arguments arguments = raspberry.getCommandHandler().processArguments(args);
 
         RaspberryCommand executionNode = command.findCommand(arguments);
+
+        if (executionNode == null) {
+            int page = 1;
+            if (args.length > 1) {
+                try {
+                    page = Integer.parseInt(args[1]);
+                } catch (NumberFormatException ignored) {
+                    page = 1;
+                }
+            }
+            raspberry.getCommandHandler().sendHelp(command, raspberry.getCommandIssuer(sender), page);
+            return;
+        }
+
         String realLabel = executionNode.getFullLabel();
+        IErrorMessageFormatter formatter = raspberry.getMessageFormatter().getErrorMessageFormatter();
 
         try {
             CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
 
             executionNode.invoke(issuer, arguments);
         } catch (UnknownCommandException ex) {
-            if (ex.showSyntax()) sender.sendMessage(RaspberryVelocityUtils.color(executionNode.sendHelp(arguments)));
-            else
-                sender.sendMessage(RaspberryVelocityUtils.color(raspberry.getCommandHandler().getUnknownCommandMessage()));
+            if (ex.showSyntax()) executionNode.sendHelp(raspberry.getCommandIssuer(sender));
+            else sender.sendMessage(RaspberryVelocityUtils.color(raspberry.getCommandHandler().getUnknownCommandMessage()));
         } catch (InvalidExecutorException ex) {
-            if (ex.consoleOnly)
-                sender.sendMessage(RaspberryVelocityUtils.color("&cThis command can only be executed by the console."));
-            else sender.sendMessage(RaspberryVelocityUtils.color("&cThis command can only be executed by a player."));
+            if (ex.consoleOnly) sender.sendMessage(RaspberryVelocityUtils.color(formatter.consoleOnly()));
+            else sender.sendMessage(RaspberryVelocityUtils.color(formatter.playerOnly()));
         } catch (InvalidArgumentException ex) {
-            sender.sendMessage(RaspberryVelocityUtils.color("&c" + ex.getMessage()));
-            if (ex.showSyntax()) sender.sendMessage(RaspberryVelocityUtils.color("&cUsage: &7" + executionNode.getUsage()));
+            sender.sendMessage(RaspberryVelocityUtils.color(formatter.invalidArgumentPrefix() + ex.getMessage()));
+            if (ex.showSyntax()) sender.sendMessage(RaspberryVelocityUtils.color(formatter.usagePrefix() + executionNode.getUsageText()));
         } catch (IllegalArgumentException ex) {
-            sender.sendMessage(RaspberryVelocityUtils.color("&cAn internal error occurred while attempting to perform this command."));
+            sender.sendMessage(RaspberryVelocityUtils.color(formatter.internalError()));
             raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + ":");
             ex.printStackTrace();
         } catch (MethodFailedException ex) {
-            sender.sendMessage(RaspberryVelocityUtils.color("&cAn internal error occurred while attempting to perform this command."));
+            sender.sendMessage(RaspberryVelocityUtils.color(formatter.internalError()));
             raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + ":");
             raspberry.getLogger().severe(ex.getMessage());
             ex.cause.printStackTrace();

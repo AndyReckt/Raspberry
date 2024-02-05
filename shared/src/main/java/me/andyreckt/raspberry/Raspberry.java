@@ -1,6 +1,7 @@
 package me.andyreckt.raspberry;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import me.andyreckt.raspberry.adapter.RaspberryTypeAdapter;
 import me.andyreckt.raspberry.annotation.Children;
@@ -11,6 +12,8 @@ import me.andyreckt.raspberry.command.RaspberryCommandHandler;
 import me.andyreckt.raspberry.completions.CommandCompletionAction;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
+import me.andyreckt.raspberry.message.IMessageFormatter;
+import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.util.RaspberryUtils;
 
 import java.lang.reflect.Method;
@@ -31,6 +34,9 @@ public abstract class Raspberry {
     private final RaspberryCommandHandler commandHandler;
     private final Executor executor = ForkJoinPool.commonPool();
     protected Logger logger = Logger.getLogger("Raspberry");
+
+    @Setter
+    private IMessageFormatter messageFormatter = new IMessageFormatter.Default();
 
     private boolean debugMode = false;
 
@@ -124,6 +130,7 @@ public abstract class Raspberry {
     public abstract CommandIssuer<?> getCommandIssuer(Object issuer);
     public abstract CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input);
     public abstract <T extends RaspberryCommand> T createCommand(CommandData data);
+    public abstract void sendClickable(CommandIssuer<?> issuer, List<ClickablePart> parts);
 
     /**
      * Gets the default message sent to a user when they do not have permission to execute a command.

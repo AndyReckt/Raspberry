@@ -11,6 +11,7 @@ import me.andyreckt.raspberry.data.FlagData;
 import me.andyreckt.raspberry.data.IData;
 import me.andyreckt.raspberry.data.ParameterData;
 import me.andyreckt.raspberry.exception.*;
+import me.andyreckt.raspberry.help.HelpBuilder;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -108,6 +109,10 @@ public abstract class RaspberryCommand {
 
         String subCommand = arguments.getArgs().get(0);
 
+        if ("help".equalsIgnoreCase(subCommand) && autoHelp) {
+            return null;
+        }
+
         if (hasChild(subCommand)) {
             arguments.getArgs().remove(0);
             return getChild(subCommand).findCommand(arguments);
@@ -122,15 +127,22 @@ public abstract class RaspberryCommand {
         return realAliases;
     }
 
-    public String getUsage() {
+    public String getUsageText() {
         if (this.usage != null && !this.usage.isEmpty()) {
             return this.usage;
         }
 
+        String usageText = getFullLabel() + " " + getParametersUsage();
+
+        return usageText.trim();
+    }
+
+    public String getParametersUsage() {
+        if (this.usage != null && !this.usage.isEmpty()) {
+            return this.usage.replace(getFullLabel(), "").trim();
+        }
+
         StringBuilder builder = new StringBuilder();
-
-        builder.append(getFullLabel()).append(" ");
-
         List<FlagData> flags = parameters.stream()
                 .filter(data -> data instanceof FlagData)
                 .map(data -> (FlagData) data)
@@ -176,7 +188,6 @@ public abstract class RaspberryCommand {
                 }
             }
         }
-
         return builder.toString().trim();
     }
 
@@ -186,9 +197,9 @@ public abstract class RaspberryCommand {
         return issuer.hasPermission(permission);
     }
 
-    public String sendHelp(Arguments arguments) {
-        //TODO: send help
-        return "";
+    public void sendHelp(CommandIssuer<?> issuer) {
+        HelpBuilder builder = new HelpBuilder(issuer, this);
+        builder.build().forEach(issuer::sendClickable);
     }
 
     public String getFullLabel() {

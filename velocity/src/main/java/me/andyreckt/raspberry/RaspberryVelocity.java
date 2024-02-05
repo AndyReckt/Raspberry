@@ -17,6 +17,8 @@ import me.andyreckt.raspberry.command.VelocityCommandIssuer;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
 import me.andyreckt.raspberry.data.IData;
+import me.andyreckt.raspberry.util.Clickable;
+import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.velocity.VelocityRaspberryCommand;
 import me.andyreckt.raspberry.velocity.completion.VelocityCommandCompletionContext;
 
@@ -71,6 +73,12 @@ public class RaspberryVelocity extends Raspberry {
     @Override
     public CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input) {
         return new VelocityCommandCompletionContext((RaspberryVelocityCommand) command, input, (VelocityCommandIssuer) issuer);
+    }
+
+    @Override
+    public void sendClickable(CommandIssuer<?> issuer, List<ClickablePart> parts) {
+        VelocityCommandIssuer velocityIssuer = (VelocityCommandIssuer) issuer;
+        velocityIssuer.sendClickable(parts);
     }
 
     @Override @SuppressWarnings("unchecked")

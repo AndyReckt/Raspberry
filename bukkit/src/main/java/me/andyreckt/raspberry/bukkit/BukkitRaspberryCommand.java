@@ -9,6 +9,7 @@ import me.andyreckt.raspberry.exception.InvalidArgumentException;
 import me.andyreckt.raspberry.exception.InvalidExecutorException;
 import me.andyreckt.raspberry.exception.MethodFailedException;
 import me.andyreckt.raspberry.exception.UnknownCommandException;
+import me.andyreckt.raspberry.message.IErrorMessageFormatter;
 import me.andyreckt.raspberry.util.RaspberryBukkitUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -30,7 +31,7 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
 
         this.setAliases(command.getRealAliases());
         this.setDescription(command.getDescription());
-        this.setUsage(RaspberryBukkitUtils.color("&c" + command.getUsage()));
+        this.setUsage(RaspberryBukkitUtils.color("&c" + command.getUsageText()));
         this.setPermission(command.getPermission());
         this.setPermissionMessage(raspberry.getCommandHandler().getNoPermissionMessage());
     }
@@ -47,27 +48,42 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
         Arguments arguments = raspberry.getCommandHandler().processArguments(args);
 
         RaspberryCommand executionNode = command.findCommand(arguments);
+
+        if (executionNode == null) {
+            int page = 1;
+            if (args.length > 1) {
+                try {
+                    page = Integer.parseInt(args[1]);
+                } catch (NumberFormatException ignored) {
+                    page = 1;
+                }
+            }
+            raspberry.getCommandHandler().sendHelp(command, raspberry.getCommandIssuer(sender), page);
+            return;
+        }
+
         String realLabel = executionNode.getFullLabel();
+        IErrorMessageFormatter formatter = raspberry.getMessageFormatter().getErrorMessageFormatter();
 
         try {
             CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
 
             executionNode.invoke(issuer, arguments);
         } catch (UnknownCommandException ex) {
-            if (ex.showSyntax()) sender.sendMessage(RaspberryBukkitUtils.color(executionNode.sendHelp(arguments)));
+            if (ex.showSyntax()) executionNode.sendHelp(raspberry.getCommandIssuer(sender));
             else sender.sendMessage(RaspberryBukkitUtils.color(raspberry.getCommandHandler().getUnknownCommandMessage()));
         } catch (InvalidExecutorException ex) {
-            if (ex.consoleOnly) sender.sendMessage(RaspberryBukkitUtils.color("&cThis command can only be executed by the console."));
-            else sender.sendMessage(RaspberryBukkitUtils.color("&cThis command can only be executed by a player."));
+            if (ex.consoleOnly) sender.sendMessage(RaspberryBukkitUtils.color(formatter.consoleOnly()));
+            else sender.sendMessage(RaspberryBukkitUtils.color(formatter.playerOnly()));
         } catch (InvalidArgumentException ex) {
-            sender.sendMessage(RaspberryBukkitUtils.color("&c" + ex.getMessage()));
-            if (ex.showSyntax()) sender.sendMessage(RaspberryBukkitUtils.color("&cUsage: &7" + executionNode.getUsage()));
+            sender.sendMessage(RaspberryBukkitUtils.color(formatter.invalidArgumentPrefix() + ex.getMessage()));
+            if (ex.showSyntax()) sender.sendMessage(RaspberryBukkitUtils.color(formatter.usagePrefix() + executionNode.getUsageText()));
         } catch (IllegalArgumentException ex) {
-            sender.sendMessage(RaspberryBukkitUtils.color("&cAn internal error occurred while attempting to perform this command."));
+            sender.sendMessage(RaspberryBukkitUtils.color(formatter.internalError()));
             raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + " for " + sender.getName() + ":");
             ex.printStackTrace();
         } catch (MethodFailedException ex) {
-            sender.sendMessage(RaspberryBukkitUtils.color("&cAn internal error occurred while attempting to perform this command."));
+            sender.sendMessage(RaspberryBukkitUtils.color(formatter.internalError()));
             raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + " for " + sender.getName() + ":");
             raspberry.getLogger().severe(ex.getMessage());
             ex.cause.printStackTrace();
