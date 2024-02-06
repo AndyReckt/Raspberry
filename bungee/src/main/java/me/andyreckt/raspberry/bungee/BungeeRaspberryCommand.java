@@ -60,6 +60,11 @@ public class BungeeRaspberryCommand extends Command implements TabExecutor {
             return;
         }
 
+        if (executionNode.isAsync()) raspberry.getExecutor().execute(() -> execute1(executionNode, sender, arguments));
+        else execute1(executionNode, sender, arguments);
+    }
+
+    private void execute1(RaspberryCommand executionNode, CommandSender sender, Arguments arguments) {
         String realLabel = executionNode.getFullLabel();
         IErrorMessageFormatter formatter = raspberry.getMessageFormatter().getErrorMessageFormatter();
 
@@ -69,13 +74,15 @@ public class BungeeRaspberryCommand extends Command implements TabExecutor {
             executionNode.invoke(issuer, arguments);
         } catch (UnknownCommandException ex) {
             if (ex.showSyntax()) executionNode.sendHelp(raspberry.getCommandIssuer(sender));
-            else sender.sendMessage(RaspberryBungeeUtils.color(raspberry.getCommandHandler().getUnknownCommandMessage()));
+            else
+                sender.sendMessage(RaspberryBungeeUtils.color(raspberry.getCommandHandler().getUnknownCommandMessage()));
         } catch (InvalidExecutorException ex) {
             if (ex.consoleOnly) sender.sendMessage(RaspberryBungeeUtils.color(formatter.consoleOnly()));
             else sender.sendMessage(RaspberryBungeeUtils.color(formatter.playerOnly()));
         } catch (InvalidArgumentException ex) {
             sender.sendMessage(RaspberryBungeeUtils.color(formatter.invalidArgumentPrefix() + ex.getMessage()));
-            if (ex.showSyntax()) sender.sendMessage(RaspberryBungeeUtils.color(formatter.usagePrefix() + executionNode.getUsageText()));
+            if (ex.showSyntax())
+                sender.sendMessage(RaspberryBungeeUtils.color(formatter.usagePrefix() + executionNode.getUsageText()));
         } catch (IllegalArgumentException ex) {
             sender.sendMessage(RaspberryBungeeUtils.color(formatter.internalError()));
             raspberry.getLogger().severe("An error occurred while attempting to perform command " + realLabel + " for " + sender.getName() + ":");

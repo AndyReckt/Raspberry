@@ -68,6 +68,11 @@ public class VelocityRaspberryCommand implements SimpleCommand {
             return;
         }
 
+        if (executionNode.isAsync()) raspberry.getExecutor().execute(() -> execute1(sender, executionNode, arguments));
+        else execute1(sender, executionNode, arguments);
+    }
+
+    private void execute1(CommandSource sender, RaspberryCommand executionNode, Arguments arguments) {
         String realLabel = executionNode.getFullLabel();
         IErrorMessageFormatter formatter = raspberry.getMessageFormatter().getErrorMessageFormatter();
 

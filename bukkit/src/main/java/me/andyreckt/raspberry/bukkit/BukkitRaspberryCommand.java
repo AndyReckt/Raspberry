@@ -62,6 +62,11 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
             return;
         }
 
+        if (executionNode.isAsync()) raspberry.getExecutor().execute(() -> execute1(executionNode, sender, arguments));
+        else execute1(executionNode, sender, arguments);
+    }
+
+    private void execute1(RaspberryCommand executionNode, CommandSender sender, Arguments arguments) {
         String realLabel = executionNode.getFullLabel();
         IErrorMessageFormatter formatter = raspberry.getMessageFormatter().getErrorMessageFormatter();
 
