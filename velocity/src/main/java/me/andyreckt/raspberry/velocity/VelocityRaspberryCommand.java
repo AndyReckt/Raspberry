@@ -61,7 +61,6 @@ public class VelocityRaspberryCommand implements SimpleCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                 } catch (NumberFormatException ignored) {
-                    page = 1;
                 }
             }
             raspberry.getCommandHandler().sendHelp(command, raspberry.getCommandIssuer(sender), page);

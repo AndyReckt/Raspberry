@@ -26,27 +26,12 @@ public class HelpBuilder {
     public HelpBuilder(CommandIssuer<?> issuer, RaspberryCommand command, int currentPage) {
         this.command = command;
         this.issuer = issuer;
-        this.currentPage = Math.min(Math.max(1, currentPage), this.getTotalPages());
-
         this.addLines(command.getChildren());
+        this.currentPage = Math.min(Math.max(1, currentPage), this.getTotalPages());
     }
 
     public void addLines(Map<String, RaspberryCommand> children) {
         List<RaspberryCommand> commands = new ArrayList<>(children.values());
-        commands.sort((a, b) -> {
-            String aName = a.getName();
-            String bName = b.getName();
-
-            if (aName == null) {
-                aName = a.getAliases().get(0);
-            }
-
-            if (bName == null) {
-                bName = b.getAliases().get(0);
-            }
-
-            return aName.compareTo(bName);
-        });
 
         for (RaspberryCommand command : commands) {
             if (command.isHidden()) {
@@ -85,7 +70,10 @@ public class HelpBuilder {
         parts.add(Collections.singletonList(new ClickablePart(formatter.getHeaderFormat(this))));
         parts.add(Collections.singletonList(new ClickablePart(" ")));
 
-        for (HelpLine line : new ArrayList<>(lines).subList((currentPage - 1) * 10, Math.min(lines.size(), currentPage * 10))) {
+        List<HelpLine> helpLines = new ArrayList<>(lines);
+        helpLines.sort(new HelpLineComparator());
+
+        for (HelpLine line : helpLines.subList(Math.max(0, (currentPage - 1) * 10), Math.min(lines.size(), currentPage * 10))) {
             if (line.getDescription() != null && !line.getDescription().isEmpty()) {
                 parts.add(Collections.singletonList(new ClickablePart(
                         formatter.getCommandFormatWithDescription(line), "/" + line.getParent() + " " + line.getCommand()
@@ -99,5 +87,12 @@ public class HelpBuilder {
 
         parts.add(formatter.getFooterFormat(this));
         return parts;
+    }
+
+    private static class HelpLineComparator implements Comparator<HelpLine> {
+        @Override
+        public int compare(HelpLine a, HelpLine b) {
+            return a.getCommand().compareTo(b.getCommand());
+        }
     }
 }

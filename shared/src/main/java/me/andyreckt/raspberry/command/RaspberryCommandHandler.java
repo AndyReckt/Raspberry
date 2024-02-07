@@ -93,7 +93,7 @@ public class RaspberryCommandHandler {
         if (method.getParameterCount() < 1)
             throw new IllegalArgumentException(
                     "Method " + method.getName() + " in class "
-                            + method.getDeclaringClass().getName() + " does not have a Sender parameter."
+                            + method.getDeclaringClass().getName() + " does not have an Issuer parameter."
             );
 
         if (!raspberry.isCommandIssuer(method.getParameterTypes()[0]))
@@ -107,7 +107,7 @@ public class RaspberryCommandHandler {
         if (method.isAnnotationPresent(Command.class)) {
             commandDatas.add(new CommandData(method.getAnnotation(Command.class)));
         }
-        if (method.getDeclaringClass().isAnnotationPresent(Command.class)) {
+        if (method.getDeclaringClass().isAnnotationPresent(Command.class) && method.isAnnotationPresent(Children.class)) {
             Command parent = method.getDeclaringClass().getAnnotation(Command.class);
             commandDatas.add(new CommandData(method.getAnnotation(Children.class), new CommandData(parent)));
         }
@@ -188,6 +188,7 @@ public class RaspberryCommandHandler {
 
                 parent.registerChildren(child);
                 commands.add(parent);
+                continue;
             }
 
             RaspberryCommand command = raspberry.createCommand(commandData);

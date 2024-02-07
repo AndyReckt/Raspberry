@@ -192,6 +192,7 @@ public abstract class RaspberryCommand {
     }
 
     public boolean canUse(CommandIssuer<?> issuer) {
+        if (parent != null && !parent.canUse(issuer)) return false;
         if (permission == null || permission.isEmpty()) return true;
 
         return issuer.hasPermission(permission);
@@ -219,11 +220,11 @@ public abstract class RaspberryCommand {
     protected abstract Class<?> playerClass();
 
     private boolean isConsoleOnly() {
-        return method != null && !consoleClass().isAssignableFrom(method.getParameterTypes()[0]);
+        return method != null && method.getParameterTypes()[0].equals(consoleClass());
     }
 
     private boolean isPlayerOnly() {
-        return method != null && !playerClass().isAssignableFrom(method.getParameterTypes()[0]);
+        return method != null && method.getParameterTypes()[0].equals(playerClass());
     }
 
     public void invoke(CommandIssuer<?> issuer, Arguments arguments) throws CommandProcessException {
