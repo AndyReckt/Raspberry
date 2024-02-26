@@ -1,6 +1,7 @@
 package me.andyreckt.raspberry;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.andyreckt.raspberry.adapter.defaults.BukkitTypeAdapters;
 import me.andyreckt.raspberry.bukkit.BukkitRaspberryCommand;
 import me.andyreckt.raspberry.bukkit.completion.BukkitCommandCompletionContext;
@@ -34,6 +35,9 @@ public class RaspberryBukkit extends Raspberry {
     private final JavaPlugin plugin;
     private final SimpleCommandMap commandMap;
 
+    @Getter @Setter
+    private boolean forceRegister = false;
+
     public RaspberryBukkit(JavaPlugin plugin) {
         super(new RaspberryBukkitCommand());
         bukkitInstance = this;
@@ -55,6 +59,11 @@ public class RaspberryBukkit extends Raspberry {
 
     @Override
     public void injectCommand(RaspberryCommand command) {
+        if (commandMap.getCommand(command.getName()) != null && forceRegister) {
+            logger.warning("Command " + command.getName() + " is already registered forcing the new one over it.");
+            commandMap.getCommand(command.getName()).unregister(commandMap);
+        }
+
         commandMap.register(plugin.getName(), new BukkitRaspberryCommand((RaspberryBukkitCommand) command, plugin));
     }
 

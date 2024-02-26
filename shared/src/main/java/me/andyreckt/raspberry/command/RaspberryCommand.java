@@ -13,6 +13,7 @@ import me.andyreckt.raspberry.data.ParameterData;
 import me.andyreckt.raspberry.exception.*;
 import me.andyreckt.raspberry.help.HelpBuilder;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -227,7 +228,7 @@ public abstract class RaspberryCommand {
         return method != null && method.getParameterTypes()[0].equals(playerClass());
     }
 
-    public void invoke(CommandIssuer<?> issuer, Arguments arguments) throws CommandProcessException {
+    public void invoke(CommandIssuer<?> issuer, Arguments arguments) {
         if (!canUse(issuer)) {
             throw new NoPermissionException();
         }
@@ -318,12 +319,11 @@ public abstract class RaspberryCommand {
             if (Raspberry.getInstance().isDebugMode() && end - start >= 300L) {
                 Raspberry.getInstance().getLogger().warning("Command '/" + getFullLabel() + "' took " + (end - start) + "ms! (async: " + async + ")");
             }
-        } catch (InvalidArgumentException ex) {
-            throw ex;
-        } catch (IllegalAccessException ex) {
-            throw new CommandProcessException("There was a problem while accessing the command.", false);
-        } catch (Exception ex) {
-            throw new MethodFailedException("An error occurred while processing method.", ex);
+        } catch (Exception thrown) {
+            Throwable ex = thrown instanceof InvocationTargetException ? thrown.getCause() : thrown;
+            if (ex instanceof InvalidArgumentException) throw (InvalidArgumentException) ex;
+            else if (ex instanceof IllegalAccessException) throw new CommandProcessException("There was a problem while accessing the command.", false);
+            else throw new MethodFailedException("An error occurred while processing method.", ex);
         }
     }
 

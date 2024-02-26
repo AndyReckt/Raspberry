@@ -49,7 +49,7 @@ public class PaperCommandCompletionHandler implements Listener {
         CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
 
         String commandLabel = stripLeadingSlash(args[0]);
-        args = args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[]{""};
+        args = Arrays.copyOfRange(args, 1, args.length);
 
         RaspberryCommand command = raspberry.getRootCommand().getChild(commandLabel);
 

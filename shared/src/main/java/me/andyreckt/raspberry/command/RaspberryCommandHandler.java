@@ -216,6 +216,7 @@ public class RaspberryCommandHandler {
 
     public List<String> getCompletions(RaspberryCommand command, CommandIssuer issuer, String[] args) {
         Set<String> completions = new HashSet<>();
+//        completions.add(" ");
 
         Arguments arguments = this.processArguments(args);
 
@@ -223,28 +224,24 @@ public class RaspberryCommandHandler {
         if (!node.canUse(issuer)) return new ArrayList<>(completions);
 
         List<String> realArgs = arguments.getArgs();
+        String lastArg = realArgs.isEmpty() ? "" : realArgs.get(realArgs.size() - 1);
 
         int index = realArgs.size() - 1;
         if (index < 0) index = 0;
         if (args[args.length -1].equalsIgnoreCase(" ")) index++;
 
         if (node.hasChild()) {
-            String name = realArgs.isEmpty() ? "" : realArgs.get(realArgs.size() - 1);
             completions.addAll(node.getChildren().values().stream()
-                    .filter(it -> node.getName() != null && node.canUse(issuer) &&
-                            (RaspberryUtils.startsWithIgnoreCase(node.getName(), name) || name == null || name.isEmpty()))
+                    .filter(it -> it.getName() != null && it.canUse(issuer) &&
+                            (RaspberryUtils.startsWithIgnoreCase(it.getName(), lastArg) || lastArg == null || lastArg.isEmpty()))
                     .map(RaspberryCommand::getName)
                     .collect(Collectors.toList()));
-
 
             if (!completions.isEmpty()) {
                 return new ArrayList<>(completions);
             }
         }
 
-        if (args[args.length - 1].equalsIgnoreCase(node.getName()) && !args[args.length -1].equalsIgnoreCase(" ")) {
-            return new ArrayList<>(completions);
-        }
 
         List<FlagData> possibleFlags = node.getParameters().stream()
                 .filter(data -> data instanceof FlagData)
@@ -253,11 +250,10 @@ public class RaspberryCommandHandler {
 
         if (!possibleFlags.isEmpty()) {
             for (FlagData flag : possibleFlags) {
-                String arg = args[args.length - 1];
-                if (RaspberryConstant.FLAG_PATTERN.matcher(arg).matches()
-                        || arg.startsWith("-") && (RaspberryUtils.startsWithIgnoreCase(flag.values()[0], arg.substring(1)))
-                        || arg.equals("-")
-                        || arg.isEmpty() || arg.equals(" ")
+                if (RaspberryConstant.FLAG_PATTERN.matcher(lastArg).matches()
+                        || lastArg.startsWith("-") && (RaspberryUtils.startsWithIgnoreCase(flag.values()[0], lastArg.substring(1)))
+                        || lastArg.equals("-")
+                        || lastArg.isEmpty() || lastArg.equals(" ")
                 ) {
                     completions.add("-" + flag.values()[0]);
                 }
@@ -270,13 +266,11 @@ public class RaspberryCommandHandler {
                     .map(param -> (ParameterData) param)
                     .collect(Collectors.toList());
 
-            int fixed = Math.max(0, index - 1);
-
             if (params.isEmpty()) {
                 return new ArrayList<>(completions);
             }
 
-            ParameterData data = params.get(fixed);
+            ParameterData data = params.get(index);
 
             RaspberryTypeAdapter<?> parameterType = this.getTypeAdapter(data.clazz());
 
@@ -285,7 +279,7 @@ public class RaspberryCommandHandler {
                     realArgs.add("");
                     ++index;
                 }
-                String argumentBeingCompleted = (index >= realArgs.size() || realArgs.isEmpty()) ? "" : realArgs.get(index).trim();
+                String argumentBeingCompleted = lastArg; /*index >= realArgs.size() ? "" : realArgs.get(index).trim();*/
 
                 String[] tabCompleteFlags = data.tabComplete();
 
