@@ -50,6 +50,7 @@ public class Clickable {
             message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, suggestString));
         }
 
+        text = text + msg;
         this.components.add(message);
 
         return message;
@@ -63,7 +64,7 @@ public class Clickable {
         if (player instanceof Player) {
             ((Player) player).spigot().sendMessage(asComponents());
         } else {
-            player.sendMessage(text);
+            player.sendMessage(RaspberryBukkitUtils.color(text));
         }
     }
 }
