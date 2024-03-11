@@ -7,6 +7,7 @@ import me.andyreckt.raspberry.RaspberryPaper;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.command.RaspberryCommand;
 import me.andyreckt.raspberry.exception.CompletionFailedException;
+import me.andyreckt.raspberry.util.RaspberryUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,9 +34,9 @@ public class PaperCommandCompletionHandler implements Listener {
             List<String> completions = getCompletions(buffer, event.getCompletions(), event.getSender());
             if (completions != null) {
                 // if we have no completion data, client will display an error, lets just send a space instead (https://bugs.mojang.com/browse/MC-165562)
-                if (completions.size() == 1 && completions.get(0).isEmpty()) {
-                    completions.set(0, " ");
-                }
+//                if (completions.size() == 1 && completions.get(0).isEmpty()) {
+//                    completions.set(0, " ");
+//                }
                 event.setCompletions(completions);
                 event.setHandled(true);
             }
@@ -49,24 +50,10 @@ public class PaperCommandCompletionHandler implements Listener {
         CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
 
         String commandLabel = stripLeadingSlash(args[0]);
-        args = Arrays.copyOfRange(args, 1, args.length);
-
         RaspberryCommand command = raspberry.getRootCommand().getChild(commandLabel);
 
-        List<String> completions = raspberry.getCommandHandler().getCompletions(command, issuer, args);
-
-        return performOnImmutable(existingCompletions, (list) -> list.addAll(completions));
-    }
-
-    private <T> List<T> performOnImmutable(List<T> list, Consumer<List<T>> action) {
-        try {
-            action.accept(list);
-        } catch (UnsupportedOperationException ex) {
-            list = new ArrayList<>(list);
-            action.accept(list);
-        }
-
-        return list;
+        List<String> completions = raspberry.getCommandHandler().getCompletions(command, issuer, buffer);
+        return RaspberryUtils.performOnImmutable(existingCompletions, (list) -> list.addAll(completions));
     }
 
     private String stripLeadingSlash(String arg) {

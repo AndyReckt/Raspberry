@@ -68,11 +68,11 @@ public abstract class RaspberryCommand {
         this.owningInstance = instance;
     }
 
-    public boolean hasChild() {
+    public boolean hasChildren() {
         return !children.isEmpty();
     }
 
-    public boolean hasChild(String name) {
+    public boolean hasChildren(String name) {
         return children.containsKey(name.toLowerCase());
     }
 
@@ -114,7 +114,7 @@ public abstract class RaspberryCommand {
             return null;
         }
 
-        if (hasChild(subCommand)) {
+        if (hasChildren(subCommand)) {
             arguments.getArgs().remove(0);
             return getChild(subCommand).findCommand(arguments);
         }
@@ -234,7 +234,7 @@ public abstract class RaspberryCommand {
         }
 
         if (method == null) {
-            if (hasChild()) {
+            if (hasChildren()) {
                 if (hidden) throw new UnknownCommandException(false);
                 else throw new UnknownCommandException(true);
             }

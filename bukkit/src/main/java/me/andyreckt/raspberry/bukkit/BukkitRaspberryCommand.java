@@ -1,5 +1,6 @@
 package me.andyreckt.raspberry.bukkit;
 
+import lombok.Getter;
 import me.andyreckt.raspberry.RaspberryBukkit;
 import me.andyreckt.raspberry.arguments.Arguments;
 import me.andyreckt.raspberry.command.CommandIssuer;
@@ -19,6 +20,7 @@ import java.util.*;
 public class BukkitRaspberryCommand extends Command implements PluginIdentifiableCommand {
     private static final RaspberryBukkit raspberry = RaspberryBukkit.getBukkitInstance();
     private final Plugin plugin;
+    @Getter
     private final RaspberryBukkitCommand command;
 
     public BukkitRaspberryCommand(RaspberryBukkitCommand command, Plugin plugin) {
@@ -93,13 +95,16 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
         }
     }
 
-
-    @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-        if (!(sender instanceof Player)) return new ArrayList<>();
+    public List<String> tabComplete(CommandSender sender, String alias, String cmdLine) {
         CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
-        return raspberry.getCommandHandler().getCompletions(command, issuer, args);
+        return raspberry.getCommandHandler().getCompletions(command, issuer, cmdLine);
     }
+
+//    @Override
+//    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+//        CommandIssuer<?> issuer = raspberry.getCommandIssuer(sender);
+//        return raspberry.getCommandHandler().getCompletions(command, issuer, args);
+//    }
 
     @Override
     public Plugin getPlugin() {

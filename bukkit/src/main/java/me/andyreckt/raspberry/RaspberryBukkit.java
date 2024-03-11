@@ -4,29 +4,24 @@ import lombok.Getter;
 import lombok.Setter;
 import me.andyreckt.raspberry.adapter.defaults.BukkitTypeAdapters;
 import me.andyreckt.raspberry.bukkit.BukkitRaspberryCommand;
+import me.andyreckt.raspberry.bukkit.RaspberryCommandMap;
 import me.andyreckt.raspberry.bukkit.completion.BukkitCommandCompletionContext;
 import me.andyreckt.raspberry.command.*;
-import me.andyreckt.raspberry.completions.CommandCompletionAction;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
-import me.andyreckt.raspberry.data.IData;
 import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.util.RaspberryBukkitConstant;
+import me.andyreckt.raspberry.util.RaspberryUtils;
 import org.bukkit.*;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class RaspberryBukkit extends Raspberry {
 
@@ -37,12 +32,15 @@ public class RaspberryBukkit extends Raspberry {
 
     @Getter @Setter
     private boolean forceRegister = false;
+    @Getter @Setter
+    private boolean isShowFallbackCommands = false;
 
     public RaspberryBukkit(JavaPlugin plugin) {
         super(new RaspberryBukkitCommand());
         bukkitInstance = this;
         this.plugin = plugin;
 
+        this.swapCommandMap();
         this.commandMap = getCommandMap();
 
         this.registerTypeAdapter(Player.class, BukkitTypeAdapters.PLAYER);
@@ -106,6 +104,29 @@ public class RaspberryBukkit extends Raspberry {
             return (SimpleCommandMap) field.get(pluginManager);
         } catch (Exception exception) {
             throw new RuntimeException(exception);
+
+        }
+    }
+
+    private void swapCommandMap() {
+        try {
+            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+
+            if (commandMapField.get(Bukkit.getServer()) instanceof RaspberryCommandMap) {
+                return;
+            }
+
+            Object oldCommandMap = commandMapField.get(Bukkit.getServer());
+            RaspberryCommandMap newCommandMap = new RaspberryCommandMap(Bukkit.getServer());
+
+            Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            knownCommandsField.setAccessible(true);
+
+            RaspberryUtils.setFinal(knownCommandsField, newCommandMap, knownCommandsField.get(oldCommandMap));
+            RaspberryUtils.setFinal(commandMapField, Bukkit.getServer(), newCommandMap);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 

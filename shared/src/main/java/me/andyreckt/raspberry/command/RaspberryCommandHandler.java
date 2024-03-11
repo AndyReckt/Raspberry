@@ -215,8 +215,18 @@ public class RaspberryCommandHandler {
     }
 
     public List<String> getCompletions(RaspberryCommand command, CommandIssuer issuer, String[] args) {
+        //add command name to args
+        String[] arguments = new String[args.length +1];
+        arguments[0] = command.getName();
+        System.arraycopy(args, 0, arguments, 1, args.length);
+        return getCompletions(command, issuer, String.join(" ", arguments));
+    }
+
+    public List<String> getCompletions(RaspberryCommand command, CommandIssuer issuer, String cmdLine) {
         Set<String> completions = new HashSet<>();
 //        completions.add(" ");
+        boolean isNew = cmdLine.endsWith(" ");
+        String[] args = Arrays.copyOfRange(cmdLine.split(" "), 1, cmdLine.split(" ").length);
 
         Arguments arguments = this.processArguments(args);
 
@@ -224,16 +234,16 @@ public class RaspberryCommandHandler {
         if (!node.canUse(issuer)) return new ArrayList<>(completions);
 
         List<String> realArgs = arguments.getArgs();
-        String lastArg = realArgs.isEmpty() ? "" : realArgs.get(realArgs.size() - 1);
+        String beingCompleted = (isNew || realArgs.isEmpty()) ? "" : realArgs.get(realArgs.size() - 1);
 
         int index = realArgs.size() - 1;
         if (index < 0) index = 0;
-        if (args[args.length -1].equalsIgnoreCase(" ")) index++;
+        if (index > 0 && isNew) index++;
 
-        if (node.hasChild()) {
+        if (node.hasChildren()) {
             completions.addAll(node.getChildren().values().stream()
                     .filter(it -> it.getName() != null && it.canUse(issuer) &&
-                            (RaspberryUtils.startsWithIgnoreCase(it.getName(), lastArg) || lastArg == null || lastArg.isEmpty()))
+                            (RaspberryUtils.startsWithIgnoreCase(it.getName(), beingCompleted) || beingCompleted == null || beingCompleted.isEmpty()))
                     .map(RaspberryCommand::getName)
                     .collect(Collectors.toList()));
 
@@ -242,7 +252,6 @@ public class RaspberryCommandHandler {
             }
         }
 
-
         List<FlagData> possibleFlags = node.getParameters().stream()
                 .filter(data -> data instanceof FlagData)
                 .map(data -> (FlagData) data)
@@ -250,10 +259,10 @@ public class RaspberryCommandHandler {
 
         if (!possibleFlags.isEmpty()) {
             for (FlagData flag : possibleFlags) {
-                if (RaspberryConstant.FLAG_PATTERN.matcher(lastArg).matches()
-                        || lastArg.startsWith("-") && (RaspberryUtils.startsWithIgnoreCase(flag.values()[0], lastArg.substring(1)))
-                        || lastArg.equals("-")
-                        || lastArg.isEmpty() || lastArg.equals(" ")
+                if (RaspberryConstant.FLAG_PATTERN.matcher(beingCompleted).matches()
+                        || beingCompleted.startsWith("-") && (RaspberryUtils.startsWithIgnoreCase(flag.values()[0], beingCompleted.substring(1)))
+                        || beingCompleted.equals("-")
+                        || beingCompleted.isEmpty() || beingCompleted.equals(" ")
                 ) {
                     completions.add("-" + flag.values()[0]);
                 }
@@ -269,7 +278,9 @@ public class RaspberryCommandHandler {
             if (params.isEmpty()) {
                 return new ArrayList<>(completions);
             }
-
+            if (index >= params.size()) {
+                return new ArrayList<>(completions);
+            }
             ParameterData data = params.get(index);
 
             RaspberryTypeAdapter<?> parameterType = this.getTypeAdapter(data.clazz());
@@ -279,7 +290,6 @@ public class RaspberryCommandHandler {
                     realArgs.add("");
                     ++index;
                 }
-                String argumentBeingCompleted = lastArg; /*index >= realArgs.size() ? "" : realArgs.get(index).trim();*/
 
                 String[] tabCompleteFlags = data.tabComplete();
 
@@ -288,21 +298,21 @@ public class RaspberryCommandHandler {
                         CommandCompletionAction<?> action = this.completions.get(flag);
 
                         if (action != null) {
-                            Collection<String> suggestions = action.get(raspberry.getCommandCompletionContext(node, issuer, argumentBeingCompleted));
+                            Collection<String> suggestions = action.get(raspberry.getCommandCompletionContext(node, issuer, beingCompleted));
                             completions.addAll(suggestions.stream()
-                                    .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, argumentBeingCompleted))
+                                    .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, beingCompleted))
                                     .collect(Collectors.toList()));
                         }
                         continue;
                     }
-                    if (RaspberryUtils.startsWithIgnoreCase(flag, argumentBeingCompleted)) {
+                    if (RaspberryUtils.startsWithIgnoreCase(flag, beingCompleted)) {
                         completions.add(flag);
                     }
                 }
 
-                List<String> suggested = parameterType.complete(issuer, argumentBeingCompleted);
+                List<String> suggested = parameterType.complete(issuer, beingCompleted);
                 completions.addAll(suggested.stream()
-                        .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, argumentBeingCompleted))
+                        .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, beingCompleted))
                         .collect(Collectors.toList()));
             }
         } catch (Exception e) {
