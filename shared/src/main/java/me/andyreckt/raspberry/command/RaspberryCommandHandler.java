@@ -23,6 +23,7 @@ import me.andyreckt.raspberry.util.RaspberryUtils;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("rawtypes")
@@ -48,6 +49,7 @@ public class RaspberryCommandHandler {
         put(Character.class, PrimitiveTypeAdapters.CHARACTER);
     }};
 
+
     @Getter
     @Setter
     private String noPermissionMessage = "You do not have permission to execute this command.";
@@ -56,6 +58,9 @@ public class RaspberryCommandHandler {
     private String unknownCommandMessage;
 
     private final HashMap<String, CommandCompletionAction> completions = new HashMap<>();
+
+    @Getter
+    private final HashMap<String, Consumer<CommandIssuer>> conditions = new HashMap<>();
 
     public RaspberryCommandHandler(Raspberry raspberry) {
         this.raspberry = raspberry;
@@ -336,5 +341,9 @@ public class RaspberryCommandHandler {
 
     public void registerCompletion(String id, List<String> completions) {
         this.completions.put(prepareCompletionId(id), x -> completions);
+    }
+
+    public void registerCondition(String id, Consumer<? extends CommandIssuer> condition) {
+        this.conditions.put(id, (Consumer<CommandIssuer>) condition);
     }
 }

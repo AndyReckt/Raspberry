@@ -16,6 +16,7 @@ import me.andyreckt.raspberry.help.HelpBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Getter
@@ -33,6 +34,7 @@ public abstract class RaspberryCommand {
     private boolean async = false;
     private boolean hidden = false;
     private List<IData> parameters = new ArrayList<>();
+    private List<String> conditions = new ArrayList<>();
 
     private Class<?> owningClass;
     private Object owningInstance;
@@ -56,6 +58,7 @@ public abstract class RaspberryCommand {
         autoHelp = command.autoHelp();
         async = command.async();
         hidden = command.hidden();
+        conditions = command.conditions();
     }
 
     protected RaspberryCommand() {
@@ -247,6 +250,23 @@ public abstract class RaspberryCommand {
 
         if (isPlayerOnly() && !issuer.isPlayer()) {
             throw new InvalidExecutorException(false);
+        }
+
+        for (String id : conditions) {
+            Consumer<CommandIssuer> condition = Raspberry.getInstance().getCommandHandler().getConditions().get(id);
+
+            if (condition == null) {
+                Raspberry.getInstance().getLogger().warning("Condition '" + id + "' not found, skipping...");
+                continue;
+            }
+
+            try {
+                condition.accept(issuer);
+            } catch (Exception ex) {
+                if (ex instanceof ConditionFailedException) throw (ConditionFailedException) ex;
+                else if (ex instanceof InvalidArgumentException) throw (InvalidArgumentException) ex;
+                else throw new MethodFailedException("An error occurred while condition.", ex);
+            }
         }
 
         List<Object> parameters = new ArrayList<>(method.getParameterCount());

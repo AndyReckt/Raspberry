@@ -21,6 +21,7 @@ public class CommandData {
     private final boolean autoHelp;
     private final boolean async;
     private final boolean hidden;
+    private final List<String> conditions;
     private CommandData parent = null;
 
     public CommandData(Command command) {
@@ -33,6 +34,7 @@ public class CommandData {
         this.autoHelp = command.autoHelp();
         this.async = command.async();
         this.hidden = command.hidden();
+        this.conditions = Arrays.asList(command.conditions());
     }
 
     public CommandData(Children children, CommandData parent) {
@@ -45,6 +47,7 @@ public class CommandData {
         this.autoHelp = children.autoHelp();
         this.async = children.async();
         this.hidden = children.hidden();
+        this.conditions = Arrays.asList(children.conditions());
         this.parent = parent;
     }
 }

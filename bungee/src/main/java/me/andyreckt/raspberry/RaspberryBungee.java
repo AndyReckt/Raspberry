@@ -10,6 +10,7 @@ import me.andyreckt.raspberry.command.RaspberryBungeeCommand;
 import me.andyreckt.raspberry.command.RaspberryCommand;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
+import me.andyreckt.raspberry.exception.ConditionFailedException;
 import me.andyreckt.raspberry.util.ClickablePart;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -17,6 +18,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class RaspberryBungee extends Raspberry {
 
@@ -51,6 +53,18 @@ public class RaspberryBungee extends Raspberry {
         }
 
         return new BungeeCommandIssuer((CommandSender) issuer);
+    }
+
+    /**
+     * Register a command condition.
+     * (You should throw a {@link ConditionFailedException}
+     * if the condition is not met.)
+     *
+     * @param id the id of the condition.
+     * @param condition the condition to register.
+     */
+    public void registerCondition(String id, Consumer<BungeeCommandIssuer> condition) {
+        this.getCommandHandler().registerCondition(id, condition);
     }
 
     @Override

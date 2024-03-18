@@ -112,7 +112,7 @@ public class RaspberryUtils {
         field.set(instance, newValue);
     }
 
-    // --add-opens java.base/java.lang=ALL-UNNAMED
+    // --add-opens=java.base/java.lang=ALL-UNNAMED
     public Field getModifiersField() throws NoSuchFieldException {
         try {
             return Field.class.getDeclaredField("modifiers");

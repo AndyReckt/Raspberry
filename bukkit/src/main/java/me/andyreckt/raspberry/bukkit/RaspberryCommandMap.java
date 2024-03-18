@@ -53,6 +53,9 @@ public class RaspberryCommandMap extends SimpleCommandMap { //TODO: Taken from C
                             if (testNode != null && !testNode.canUse(RaspberryBukkit.getBukkitInstance().getCommandIssuer(sender))) {
                                 continue;
                             }
+                            if (testNode != null && testNode.isHidden()) {
+                                continue;
+                            }
                         }
                     }
 

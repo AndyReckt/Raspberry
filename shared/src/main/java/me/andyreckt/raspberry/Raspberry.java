@@ -12,6 +12,7 @@ import me.andyreckt.raspberry.command.RaspberryCommandHandler;
 import me.andyreckt.raspberry.completions.CommandCompletionAction;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
+import me.andyreckt.raspberry.exception.ConditionFailedException;
 import me.andyreckt.raspberry.message.IMessageFormatter;
 import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.util.RaspberryUtils;
@@ -21,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 
@@ -129,7 +131,6 @@ public abstract class Raspberry {
     public abstract CommandCompletionContext getCommandCompletionContext(RaspberryCommand command, CommandIssuer<?> issuer, String input);
     public abstract <T extends RaspberryCommand> T createCommand(CommandData data);
     public abstract void sendClickable(CommandIssuer<?> issuer, List<ClickablePart> parts);
-
     /**
      * Gets the default message sent to a user when they do not have permission to execute a command.
      *

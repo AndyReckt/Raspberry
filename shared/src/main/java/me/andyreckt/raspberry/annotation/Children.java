@@ -16,4 +16,5 @@ public @interface Children {
     boolean autoHelp() default true;
     boolean async() default false;
     boolean hidden() default false;
+    String[] conditions() default {};
 }

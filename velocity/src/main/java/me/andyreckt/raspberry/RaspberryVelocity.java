@@ -17,6 +17,7 @@ import me.andyreckt.raspberry.command.VelocityCommandIssuer;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
 import me.andyreckt.raspberry.data.IData;
+import me.andyreckt.raspberry.exception.ConditionFailedException;
 import me.andyreckt.raspberry.util.Clickable;
 import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.velocity.VelocityRaspberryCommand;
@@ -24,6 +25,7 @@ import me.andyreckt.raspberry.velocity.completion.VelocityCommandCompletionConte
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Getter
 public class RaspberryVelocity extends Raspberry {
@@ -68,6 +70,18 @@ public class RaspberryVelocity extends Raspberry {
             throw new IllegalArgumentException("Issuer must be an instance of CommandSender.");
 
         return new VelocityCommandIssuer((CommandSource) issuer);
+    }
+
+    /**
+     * Register a command condition.
+     * (You should throw a {@link ConditionFailedException}
+     * if the condition is not met.)
+     *
+     * @param id the id of the condition.
+     * @param condition the condition to register.
+     */
+    public void registerCondition(String id, Consumer<VelocityCommandIssuer> condition) {
+        this.getCommandHandler().registerCondition(id, condition);
     }
 
     @Override

@@ -9,6 +9,7 @@ import me.andyreckt.raspberry.bukkit.completion.BukkitCommandCompletionContext;
 import me.andyreckt.raspberry.command.*;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
+import me.andyreckt.raspberry.exception.ConditionFailedException;
 import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.util.RaspberryBukkitConstant;
 import me.andyreckt.raspberry.util.RaspberryUtils;
@@ -22,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class RaspberryBukkit extends Raspberry {
 
@@ -30,8 +32,11 @@ public class RaspberryBukkit extends Raspberry {
     private final JavaPlugin plugin;
     private final SimpleCommandMap commandMap;
 
+    /** Whether to force register commands, overwriting existing ones */
     @Getter @Setter
     private boolean forceRegister = false;
+
+    /** Whether to show fallback commands ("/fallback:command") when running tab-completion */
     @Getter @Setter
     private boolean isShowFallbackCommands = false;
 
@@ -92,6 +97,18 @@ public class RaspberryBukkit extends Raspberry {
     @Override
     public String getDefaultUnknownCommandMessage() {
         return RaspberryBukkitConstant.UNKNOWN_COMMAND_MESSAGE;
+    }
+
+    /**
+     * Register a command condition.
+     * (You should throw a {@link ConditionFailedException}
+     * if the condition is not met.)
+     *
+     * @param id the id of the condition.
+     * @param condition the condition to register.
+     */
+    public void registerCondition(String id, Consumer<BukkitCommandIssuer> condition) {
+        this.getCommandHandler().registerCondition(id, condition);
     }
 
     private SimpleCommandMap getCommandMap() {
