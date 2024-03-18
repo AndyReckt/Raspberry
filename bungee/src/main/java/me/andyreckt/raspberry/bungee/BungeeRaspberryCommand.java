@@ -4,10 +4,7 @@ import me.andyreckt.raspberry.RaspberryBungee;
 import me.andyreckt.raspberry.arguments.Arguments;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.command.RaspberryCommand;
-import me.andyreckt.raspberry.exception.InvalidArgumentException;
-import me.andyreckt.raspberry.exception.InvalidExecutorException;
-import me.andyreckt.raspberry.exception.MethodFailedException;
-import me.andyreckt.raspberry.exception.UnknownCommandException;
+import me.andyreckt.raspberry.exception.*;
 import me.andyreckt.raspberry.message.IErrorMessageFormatter;
 import me.andyreckt.raspberry.util.RaspberryBungeeUtils;
 import net.md_5.bungee.api.CommandSender;
@@ -78,6 +75,9 @@ public class BungeeRaspberryCommand extends Command implements TabExecutor {
         } catch (InvalidExecutorException ex) {
             if (ex.consoleOnly) sender.sendMessage(RaspberryBungeeUtils.color(formatter.consoleOnly()));
             else sender.sendMessage(RaspberryBungeeUtils.color(formatter.playerOnly()));
+        } catch (ConditionFailedException ex) {
+            sender.sendMessage(RaspberryBungeeUtils.color(formatter.conditionFailedPrefix() + ex.getMessage()));
+            if (ex.showSyntax()) executionNode.sendHelp(raspberry.getCommandIssuer(sender));
         } catch (InvalidArgumentException ex) {
             sender.sendMessage(RaspberryBungeeUtils.color(formatter.invalidArgumentPrefix() + ex.getMessage()));
             if (ex.showSyntax())

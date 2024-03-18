@@ -12,7 +12,6 @@ import me.andyreckt.raspberry.util.RaspberryBukkitUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
@@ -80,6 +79,9 @@ public class BukkitRaspberryCommand extends Command implements PluginIdentifiabl
         } catch (InvalidExecutorException ex) {
             if (ex.consoleOnly) sender.sendMessage(RaspberryBukkitUtils.color(formatter.consoleOnly()));
             else sender.sendMessage(RaspberryBukkitUtils.color(formatter.playerOnly()));
+        } catch (ConditionFailedException ex) {
+            sender.sendMessage(RaspberryBukkitUtils.color(formatter.conditionFailedPrefix() + ex.getMessage()));
+            if (ex.showSyntax()) executionNode.sendHelp(raspberry.getCommandIssuer(sender));
         } catch (InvalidArgumentException ex) {
             sender.sendMessage(RaspberryBukkitUtils.color(formatter.invalidArgumentPrefix() + ex.getMessage()));
             if (ex.showSyntax()) sender.sendMessage(RaspberryBukkitUtils.color(formatter.usagePrefix() + executionNode.getUsageText()));

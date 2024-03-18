@@ -7,10 +7,7 @@ import me.andyreckt.raspberry.RaspberryVelocity;
 import me.andyreckt.raspberry.arguments.Arguments;
 import me.andyreckt.raspberry.command.CommandIssuer;
 import me.andyreckt.raspberry.command.RaspberryCommand;
-import me.andyreckt.raspberry.exception.InvalidArgumentException;
-import me.andyreckt.raspberry.exception.InvalidExecutorException;
-import me.andyreckt.raspberry.exception.MethodFailedException;
-import me.andyreckt.raspberry.exception.UnknownCommandException;
+import me.andyreckt.raspberry.exception.*;
 import me.andyreckt.raspberry.message.IErrorMessageFormatter;
 import me.andyreckt.raspberry.util.RaspberryVelocityUtils;
 
@@ -85,6 +82,9 @@ public class VelocityRaspberryCommand implements SimpleCommand {
         } catch (InvalidExecutorException ex) {
             if (ex.consoleOnly) sender.sendMessage(RaspberryVelocityUtils.color(formatter.consoleOnly()));
             else sender.sendMessage(RaspberryVelocityUtils.color(formatter.playerOnly()));
+        } catch (ConditionFailedException ex) {
+            sender.sendMessage(RaspberryVelocityUtils.color(formatter.conditionFailedPrefix() + ex.getMessage()));
+            if (ex.showSyntax()) executionNode.sendHelp(raspberry.getCommandIssuer(sender));
         } catch (InvalidArgumentException ex) {
             sender.sendMessage(RaspberryVelocityUtils.color(formatter.invalidArgumentPrefix() + ex.getMessage()));
             if (ex.showSyntax()) sender.sendMessage(RaspberryVelocityUtils.color(formatter.usagePrefix() + executionNode.getUsageText()));

@@ -10,6 +10,8 @@ public interface IErrorMessageFormatter {
 
     String internalError();
 
+    String conditionFailedPrefix();
+
 
     class Default implements IErrorMessageFormatter {
 
@@ -36,6 +38,11 @@ public interface IErrorMessageFormatter {
         @Override
         public String internalError() {
             return "&4&l┃ &cAn internal error occurred while executing this command. Please contact an administrator if this issue persists.";
+        }
+
+        @Override
+        public String conditionFailedPrefix() {
+            return "&4&l┃ &c";
         }
     }
 }
