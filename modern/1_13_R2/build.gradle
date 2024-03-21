@@ -1,0 +1,13 @@
+repositories {
+    maven {
+        url 'https://repo.mincats.eu/public'
+    }
+}
+
+dependencies {
+    compileOnly project(":modern-api")
+    compileOnly 'me.andyreckt.raspberry:bukkit:1.1.17'
+    compileOnly project(":shared")
+
+    compileOnly 'org.spigotmc:spigot:1.13.2'
+}

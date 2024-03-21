@@ -14,8 +14,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 
-public class RaspberryCommandMap extends SimpleCommandMap { //TODO: Taken from Cubed, needs rework and cleaning
-    public RaspberryCommandMap(Server server) {
+public class RaspberryLegacyCommandMap extends SimpleCommandMap { //TODO: Taken from Cubed, needs rework and cleaning
+    public RaspberryLegacyCommandMap(Server server) {
         super(server);
     }
 

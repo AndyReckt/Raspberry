@@ -4,14 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 import me.andyreckt.raspberry.adapter.defaults.BukkitTypeAdapters;
 import me.andyreckt.raspberry.bukkit.BukkitRaspberryCommand;
-import me.andyreckt.raspberry.bukkit.RaspberryCommandMap;
+import me.andyreckt.raspberry.bukkit.RaspberryLegacyCommandMap;
 import me.andyreckt.raspberry.bukkit.completion.BukkitCommandCompletionContext;
+import me.andyreckt.raspberry.bukkit.modern.ModernCommandMapHandler;
 import me.andyreckt.raspberry.command.*;
 import me.andyreckt.raspberry.completions.CommandCompletionContext;
 import me.andyreckt.raspberry.data.CommandData;
 import me.andyreckt.raspberry.exception.ConditionFailedException;
 import me.andyreckt.raspberry.util.ClickablePart;
 import me.andyreckt.raspberry.util.RaspberryBukkitConstant;
+import me.andyreckt.raspberry.util.RaspberryBukkitUtils;
 import me.andyreckt.raspberry.util.RaspberryUtils;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -38,7 +40,7 @@ public class RaspberryBukkit extends Raspberry {
 
     /** Whether to show fallback commands ("/fallback:command") when running tab-completion */
     @Getter @Setter
-    private boolean isShowFallbackCommands = false;
+    private boolean showFallbackCommands = false;
 
     public RaspberryBukkit(JavaPlugin plugin) {
         super(new RaspberryBukkitCommand());
@@ -126,16 +128,21 @@ public class RaspberryBukkit extends Raspberry {
     }
 
     private void swapCommandMap() {
+        if (RaspberryBukkitUtils.isNewMap()) {
+            new ModernCommandMapHandler();
+            return;
+        }
+
         try {
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
 
-            if (commandMapField.get(Bukkit.getServer()) instanceof RaspberryCommandMap) {
+            if (commandMapField.get(Bukkit.getServer()) instanceof RaspberryLegacyCommandMap) {
                 return;
             }
 
             Object oldCommandMap = commandMapField.get(Bukkit.getServer());
-            RaspberryCommandMap newCommandMap = new RaspberryCommandMap(Bukkit.getServer());
+            RaspberryLegacyCommandMap newCommandMap = new RaspberryLegacyCommandMap(Bukkit.getServer());
 
             Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
             knownCommandsField.setAccessible(true);

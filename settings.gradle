@@ -2,6 +2,24 @@
 
 rootProject.name = 'Raspberry'
 include 'shared'
+include 'modern-api'
+// Define the root of the modules
+def modernDir = new File(rootDir, 'modern')
+
+// Check if the directory exists and is a directory
+if (modernDir.exists() && modernDir.isDirectory()) {
+    // List all subdirectories
+    modernDir.eachDir { dir ->
+        // Check if a build.gradle file exists in the subdirectory
+        if (new File(dir, 'build.gradle').exists() || new File(dir, 'build.gradle.kts').exists()) {
+            // Include the module
+            include ":modern:${dir.name}"
+            // Set the project directory if needed
+            project(":modern:${dir.name}").projectDir = dir
+        }
+    }
+}
+
 include 'bukkit'
 include 'paper'
 include 'velocity'

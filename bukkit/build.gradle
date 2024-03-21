@@ -1,6 +1,27 @@
+repositories {
+    maven { url "https://repo.songoda.com/repository/public/" }
+    maven { url "https://repo.rosewooddev.io/repository/public/" }
+}
 
 dependencies {
     compileOnly "org.github.spigot:1.8.8:1.8.8"
 
     implementation project(':shared')
+    implementation project(':modern-api')
+    implementation project(':modern:1_13_R1')
+    implementation project(':modern:1_13_R2')
+    implementation project(':modern:1_14_R1')
+    implementation project(':modern:1_15_R1')
+    implementation project(':modern:1_16_R1')
+    implementation project(':modern:1_16_R2')
+    implementation project(':modern:1_16_R3')
+    implementation project(':modern:1_17_R1')
+    implementation project(':modern:1_18_R1')
+    implementation project(':modern:1_18_R2')
+    implementation project(':modern:1_19_R1')
+    implementation project(':modern:1_19_R2')
+    implementation project(':modern:1_19_R3')
+    implementation project(':modern:1_20_R1')
+    implementation project(':modern:1_20_R2')
+    implementation project(':modern:1_20_R3')
 }
