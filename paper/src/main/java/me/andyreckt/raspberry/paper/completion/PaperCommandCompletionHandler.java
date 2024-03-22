@@ -41,7 +41,7 @@ public class PaperCommandCompletionHandler implements Listener {
                 event.setHandled(true);
             }
         } catch (Exception e) {
-            if (raspberry.isDebugMode()) throw new CompletionFailedException();
+            if (raspberry.isDebugMode()) throw new CompletionFailedException(e);
         }
     }
 
