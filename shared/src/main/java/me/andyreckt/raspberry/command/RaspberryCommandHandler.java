@@ -242,8 +242,15 @@ public class RaspberryCommandHandler {
         String beingCompleted = (isNew || realArgs.isEmpty()) ? "" : realArgs.get(realArgs.size() - 1);
 
         int index = realArgs.size() - 1;
+        System.out.println(
+                "index: " + index +
+                        " | isNew: " + isNew +
+                        " | beingCompleted: " + beingCompleted +
+                        " | realArgs: " + realArgs +
+                        " | args: " + Arrays.toString(args)
+        );
         if (index < 0) index = 0;
-        if (index > 0 && isNew) index++;
+        else if (isNew) index++;
 
         if (node.hasChildren()) {
             completions.addAll(node.getChildren().values().stream()
