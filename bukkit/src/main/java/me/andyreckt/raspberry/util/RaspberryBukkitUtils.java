@@ -10,7 +10,7 @@ public class RaspberryBukkitUtils {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public final String VERSION = Bukkit.getServer().getBukkitVersion();
+    public final String VERSION = Bukkit.getServer().getBukkitVersion().split("-")[0];
     public final int MINOR_VERSION = Integer.parseInt(VERSION.split("\\.")[1]);
 
     public boolean isNewMap() {
