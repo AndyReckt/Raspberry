@@ -51,6 +51,7 @@ public class PaperCommandCompletionHandler implements Listener {
 
         String commandLabel = stripLeadingSlash(args[0]);
         RaspberryCommand command = raspberry.getRootCommand().getChild(commandLabel);
+        if (command == null) return null;
 
         List<String> completions = raspberry.getCommandHandler().getCompletions(command, issuer, buffer);
         if (!raspberry.isShowFallbackCommands()) completions.removeIf(it -> it.contains(":"));
