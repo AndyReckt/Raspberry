@@ -315,7 +315,7 @@ public class RaspberryCommandHandler {
                     }
                 }
 
-                List<String> suggested = parameterType.complete(issuer, beingCompleted);
+                List<String> suggested = parameterType.complete(issuer, beingCompleted, data.options());
                 completions.addAll(suggested.stream()
                         .filter(s -> RaspberryUtils.startsWithIgnoreCase(s, beingCompleted))
                         .collect(Collectors.toList()));

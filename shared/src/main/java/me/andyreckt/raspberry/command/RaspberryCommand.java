@@ -313,7 +313,7 @@ public abstract class RaspberryCommand {
 
                 Object value;
                 try {
-                    value = adapter.transform(issuer, argument);
+                    value = adapter.transform(issuer, argument, parameterData.options());
                 } catch (InvalidArgumentException ex) {
                     throw ex;
                 } catch (Exception ex) {

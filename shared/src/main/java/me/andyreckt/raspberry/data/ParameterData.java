@@ -14,6 +14,7 @@ public class ParameterData implements IData {
     private final String[] tabComplete;
     private final Class<?> clazz;
     private final int place;
+    private final String[] options;
 
     public ParameterData(Param param, Class<?> clazz, int place) {
         this.name = param.name();
@@ -21,6 +22,7 @@ public class ParameterData implements IData {
         this.wildcard = param.wildcard();
         this.baseValue = param.baseValue();
         this.tabComplete = param.tabComplete();
+        this.options = param.options();
         this.clazz = clazz;
         this.place = place;
     }

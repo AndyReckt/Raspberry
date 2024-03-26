@@ -13,4 +13,5 @@ public @interface Param {
     boolean wildcard() default false;
     String baseValue() default "";
     String[] tabComplete() default "";
+    String[] options() default "";
 }
