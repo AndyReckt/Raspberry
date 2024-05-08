@@ -41,6 +41,10 @@ allprojects {
         maven {
             url 'https://repo.mincats.eu/mirrors'
         }
+
+        maven {
+            url 'https://repo.mincats.eu/public'
+        }
     }
 }
 
