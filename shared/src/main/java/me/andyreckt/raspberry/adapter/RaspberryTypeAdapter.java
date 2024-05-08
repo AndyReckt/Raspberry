@@ -14,14 +14,4 @@ public interface RaspberryTypeAdapter<T> {
     default List<String> complete(CommandIssuer sender, String source, String... options) {
         return EMPTY_LIST;
     }
-
-    @Deprecated
-    default T transform(CommandIssuer sender, String source) throws InvalidArgumentException {
-        return this.transform(sender, source, "");
-    }
-
-    @Deprecated
-    default List<String> complete(CommandIssuer sender, String source) {
-        return this.complete(sender, source, "");
-    }
 }

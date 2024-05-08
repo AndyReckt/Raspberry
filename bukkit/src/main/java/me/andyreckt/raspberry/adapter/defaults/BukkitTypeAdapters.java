@@ -17,7 +17,7 @@ import java.util.Map;
 public class BukkitTypeAdapters {
     public RaspberryTypeAdapter<OfflinePlayer> OFFLINE_PLAYER = new RaspberryTypeAdapter<OfflinePlayer>() {
         @Override
-        public OfflinePlayer transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public OfflinePlayer transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
                 return (Player) sender.getIssuer();
             }
@@ -32,7 +32,7 @@ public class BukkitTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -45,7 +45,7 @@ public class BukkitTypeAdapters {
 
     public RaspberryTypeAdapter<Player> PLAYER = new RaspberryTypeAdapter<Player>() {
         @Override
-        public Player transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public Player transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
                 return (Player) sender.getIssuer();
             }
@@ -64,7 +64,7 @@ public class BukkitTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -77,7 +77,7 @@ public class BukkitTypeAdapters {
 
     public RaspberryTypeAdapter<World> WORLD = new RaspberryTypeAdapter<World>() {
         @Override
-        public World transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public World transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             World world = Bukkit.getServer().getWorld(source);
 
             if (world == null) {
@@ -88,7 +88,7 @@ public class BukkitTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (World world : Bukkit.getWorlds()) {
@@ -101,7 +101,7 @@ public class BukkitTypeAdapters {
 
     public RaspberryTypeAdapter<Material> MATERIAL = new RaspberryTypeAdapter<Material>() {
         @Override
-        public Material transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public Material transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             Material material = Material.matchMaterial(source.toUpperCase());
 
             if (material == null) {
@@ -112,7 +112,7 @@ public class BukkitTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (Material material : Material.values()) {
@@ -140,7 +140,7 @@ public class BukkitTypeAdapters {
 
     public RaspberryTypeAdapter<GameMode> GAMEMODE = new RaspberryTypeAdapter<GameMode>() {
         @Override
-        public GameMode transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public GameMode transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             GameMode gameMode = GAMEMODES.get(source.toLowerCase());
 
             if (gameMode == null) {
@@ -151,7 +151,7 @@ public class BukkitTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             return new ArrayList<>(GAMEMODES.keySet());
         }
     };

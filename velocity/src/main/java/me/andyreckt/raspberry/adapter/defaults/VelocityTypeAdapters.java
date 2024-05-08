@@ -19,7 +19,7 @@ public class VelocityTypeAdapters {
 
     public RaspberryTypeAdapter<Player> PLAYER = new RaspberryTypeAdapter<Player>() {
         @Override
-        public Player transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public Player transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
                 return (Player) sender.getIssuer();
             }
@@ -28,7 +28,7 @@ public class VelocityTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (Player player : plugin.getProxy().getAllPlayers()) {
@@ -41,12 +41,12 @@ public class VelocityTypeAdapters {
 
     public RaspberryTypeAdapter<ServerInfo> SERVER_INFO = new RaspberryTypeAdapter<ServerInfo>() {
         @Override
-        public ServerInfo transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public ServerInfo transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             return plugin.getProxy().getServer(source).orElseThrow(() -> new InvalidArgumentException("Server '" + source + "' not found.")).getServerInfo();
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (RegisteredServer server : plugin.getProxy().getAllServers()) {
@@ -59,12 +59,12 @@ public class VelocityTypeAdapters {
 
     public RaspberryTypeAdapter<RegisteredServer> REGISTERED_SERVER = new RaspberryTypeAdapter<RegisteredServer>() {
         @Override
-        public RegisteredServer transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public RegisteredServer transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             return plugin.getProxy().getServer(source).orElseThrow(() -> new InvalidArgumentException("Server '" + source + "' not found."));
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (RegisteredServer server : plugin.getProxy().getAllServers()) {

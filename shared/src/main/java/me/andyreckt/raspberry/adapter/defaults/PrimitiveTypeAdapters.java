@@ -25,7 +25,7 @@ public class PrimitiveTypeAdapters {
 
     public RaspberryTypeAdapter<Boolean> BOOLEAN = new RaspberryTypeAdapter<Boolean>() {
         @Override
-        public Boolean transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public Boolean transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             if (!BOOLEAN_MAP.containsKey(source.toLowerCase())) {
                 throw new InvalidArgumentException("'" + source + "' is not a valid boolean. (try true/false)");
             }
@@ -34,12 +34,12 @@ public class PrimitiveTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             return BOOLEAN_MAP.keySet().stream().filter(s -> RaspberryUtils.startsWithIgnoreCase(s, source)).collect(Collectors.toList());
         }
     };
 
-    public RaspberryTypeAdapter<Double> DOUBLE = (sender, source) -> {
+    public RaspberryTypeAdapter<Double> DOUBLE = (sender, source, options) -> {
         if (source.toLowerCase().contains("e")) {
             throw new InvalidArgumentException("'" + source + "' is not a valid number.");
         }
@@ -57,7 +57,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public RaspberryTypeAdapter<Float> FLOAT = (sender, source) -> {
+    public RaspberryTypeAdapter<Float> FLOAT = (sender, source, options) -> {
         if (source.toLowerCase().contains("e")) {
             throw new InvalidArgumentException("'" + source + "' is not a valid number.");
         }
@@ -75,7 +75,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public RaspberryTypeAdapter<Integer> INTEGER = (sender, source) -> {
+    public RaspberryTypeAdapter<Integer> INTEGER = (sender, source, options) -> {
         try {
             return Integer.parseInt(source);
         } catch (NumberFormatException exception) {
@@ -83,7 +83,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public RaspberryTypeAdapter<Long> LONG = (sender, source) -> {
+    public RaspberryTypeAdapter<Long> LONG = (sender, source, options) -> {
         try {
             return Long.parseLong(source);
         } catch (NumberFormatException exception) {
@@ -91,7 +91,7 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public RaspberryTypeAdapter<Short> SHORT = (sender, source) -> {
+    public RaspberryTypeAdapter<Short> SHORT = (sender, source, options) -> {
         try {
             return Short.parseShort(source);
         } catch (NumberFormatException exception) {
@@ -99,9 +99,9 @@ public class PrimitiveTypeAdapters {
         }
     };
 
-    public RaspberryTypeAdapter<String> STRING = (sender, source) -> source;
+    public RaspberryTypeAdapter<String> STRING = (sender, source, options) -> source;
 
-    public RaspberryTypeAdapter<Character> CHARACTER = (sender, source) -> {
+    public RaspberryTypeAdapter<Character> CHARACTER = (sender, source, options) -> {
         if (source.length() != 1) {
             throw new InvalidArgumentException("'" + source + "' is not a valid character.");
         }

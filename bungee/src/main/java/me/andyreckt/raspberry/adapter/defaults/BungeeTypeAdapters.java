@@ -16,7 +16,7 @@ import java.util.List;
 public class BungeeTypeAdapters {
     public RaspberryTypeAdapter<ProxiedPlayer> PROXIED_PLAYER = new RaspberryTypeAdapter<ProxiedPlayer>() {
         @Override
-        public ProxiedPlayer transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public ProxiedPlayer transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             if (sender.isPlayer() && (source.equalsIgnoreCase("self") || source.isEmpty())) {
                 return (ProxiedPlayer) sender.getIssuer();
             }
@@ -31,7 +31,7 @@ public class BungeeTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
@@ -44,7 +44,7 @@ public class BungeeTypeAdapters {
 
     public RaspberryTypeAdapter<ServerInfo> SERVER_INFO = new RaspberryTypeAdapter<ServerInfo>() {
         @Override
-        public ServerInfo transform(CommandIssuer sender, String source) throws InvalidArgumentException {
+        public ServerInfo transform(CommandIssuer sender, String source, String... options) throws InvalidArgumentException {
             ServerInfo server = ProxyServer.getInstance().getServerInfo(source);
 
             if (server == null) {
@@ -55,7 +55,7 @@ public class BungeeTypeAdapters {
         }
 
         @Override
-        public List<String> complete(CommandIssuer sender, String source) {
+        public List<String> complete(CommandIssuer sender, String source, String... options) {
             List<String> completions = new ArrayList<>();
 
             for (ServerInfo server : ProxyServer.getInstance().getServers().values()) {

@@ -6,12 +6,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-repositories {
-    maven {
-        url 'https://repo.mincats.eu/mirrors'
-    }
-}
-
 publishing {
     repositories {
         maven {
